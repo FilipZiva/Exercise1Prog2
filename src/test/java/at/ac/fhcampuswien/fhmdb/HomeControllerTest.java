@@ -18,16 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HomeControllerTest {
 
     private HomeController homeController;
-    private final List<Movie> movieList = Movie.initializeMovies();
-
 
     @BeforeEach
     public void setUp() {
         ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
-
         homeController = new HomeController();
-        homeController.allMovies = movieList;
         homeController.observableMovies = observableMovies;
+        homeController.initializeMovies();
+
     }
 
     @ParameterizedTest
@@ -37,7 +35,7 @@ class HomeControllerTest {
         homeController.filterMoviesByGenre(val);
 
         // Assert
-        List<Movie> expectedMovies = movieList.stream()
+        List<Movie> expectedMovies = homeController.allMovies.stream()
                 .filter(movie -> movie.getGenre().contains(Genre.valueOf(val)))
                 .collect(Collectors.toList());
         assertThat(homeController.observableMovies).containsExactlyElementsOf(expectedMovies);
@@ -45,9 +43,6 @@ class HomeControllerTest {
 
     @Test
     void testFilterMoviesByGenreWithNullGenre() {
-        // Arrange
-        homeController.initializeMovies();
-
         // Act
         homeController.filterMoviesByGenre(null);
 
@@ -58,26 +53,34 @@ class HomeControllerTest {
 
     @Test
     void testInitializeMovies() {
-        // Act
-        homeController.initializeMovies();
-
         // Assert
         assertThat(homeController.observableMovies).hasSize(5);
     }
 
 
-
+    @Test
     void testSortMoviesAscending() {
-        // Arrange
-        homeController.initializeMovies();
-        homeController.sortBtn.setText("Sort (desc)");
-
         // Act
-        homeController.sortBtn.fire();
+        homeController.filterMovieByTitleAscDesc(false);
 
         // Assert
-        List<Movie> sortedMovies = homeController.observableMovies.stream()
+        List<Movie> sortedMovies = homeController.getAllMovies().stream()
                 .sorted(Comparator.comparing(Movie::getTitle))
+                .collect(Collectors.toList());
+        assertThat(homeController.observableMovies).containsExactlyElementsOf(sortedMovies);
+    }
+
+    @Test
+    void testSortMoviesDescending() {
+        // Arrange
+        homeController.filterMovieByTitleAscDesc(false);
+
+        // Act
+        homeController.filterMovieByTitleAscDesc(true);
+
+        // Assert
+        List<Movie> sortedMovies = homeController.getAllMovies().stream()
+                .sorted(Comparator.comparing(Movie::getTitle).reversed())
                 .collect(Collectors.toList());
         assertThat(homeController.observableMovies).containsExactlyElementsOf(sortedMovies);
     }

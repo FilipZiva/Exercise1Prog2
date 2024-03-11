@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -34,7 +35,6 @@ public class HomeController implements Initializable {
     public JFXButton sortBtn;
 
     public List<Movie> allMovies;
-    ;
 
     ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
@@ -43,32 +43,8 @@ public class HomeController implements Initializable {
         initializeMovies();
         initializeUi();
         handleGenreFilter();
-
-        hanldeSortingMechanism();
-
-    }
-
-    private void hanldeSortingMechanism() {
-        // Sort button example:
-        sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
-                // TODO sort observableMovies ascending
-                sortBtn.setText("Sort (desc)");
-            } else {
-                // TODO sort observableMovies descending
-                sortBtn.setText("Sort (asc)");
-            }
-        });
-    }
-
-    public void handleGenreFilter() {
-        genreComboBox.setPromptText("Filter by Genre");
-        genreComboBox.getItems().addAll(
-                Arrays.stream(Genre.values())
-                        .map(Enum::name).toList()
-        );
-
-        genreComboBox.valueProperty().addListener((observable, oldVal, newVal) -> filterMoviesByGenre(String.valueOf(newVal)));
+        handleSortingMechanism();
+        handleSearchbarFilter();
     }
 
     public void initializeUi() {
@@ -81,16 +57,49 @@ public class HomeController implements Initializable {
         observableMovies.addAll(allMovies);
     }
 
+    public void handleGenreFilter() {
+        genreComboBox.setPromptText("Filter by Genre");
+        genreComboBox.getItems().addAll(Arrays.stream(Genre.values()).map(Enum::name).toList());
+
+        genreComboBox.valueProperty().addListener((observable, oldVal, newVal) -> filterMoviesByGenre(String.valueOf(newVal)));
+    }
+
+    private void handleSortingMechanism() {
+        sortBtn.setOnAction(actionEvent -> {
+            if (sortBtn.getText().equals("Sort (asc)")) {
+                filterMovieByTitleAscDesc(false);
+                sortBtn.setText("Sort (desc)");
+            } else {
+                filterMovieByTitleAscDesc(true);
+                sortBtn.setText("Sort (asc)");
+            }
+        });
+    }
+
+    private void handleSearchbarFilter() {
+
+    }
+
+    public void filterMovieByTitleAscDesc(boolean initialize) {
+        if (!initialize) {
+            FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle));
+        } else {
+            FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle).reversed());
+        }
+    }
+
     public void filterMoviesByGenre(String genre) {
         observableMovies.clear();
         if (genre == null || genre.isEmpty()) {
             observableMovies.addAll(allMovies);
         } else {
-            List<Movie> filteredMovies = allMovies.stream()
-                    .filter(movie -> movie.getGenre().contains(Genre.valueOf(genre)))
-                    .toList();
+            List<Movie> filteredMovies = allMovies.stream().filter(movie -> movie.getGenre().contains(Genre.valueOf(genre))).toList();
             observableMovies.addAll(filteredMovies);
         }
     }
 
+
+    public List<Movie> getAllMovies() {
+        return allMovies;
+    }
 }
