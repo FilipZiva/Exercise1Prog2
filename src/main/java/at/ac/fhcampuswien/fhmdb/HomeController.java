@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -77,7 +78,13 @@ public class HomeController implements Initializable {
     }
 
     private void handleSearchbarFilter() {
+        genreComboBox.valueProperty().addListener((observable, oldVal, newVal) -> {
+            filterMovies(String.valueOf(newVal), searchField.getText());
+        });
 
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterMovies(String.valueOf(genreComboBox.getValue()), newValue);
+        });
     }
 
     public void filterMovieByTitleAscDesc(boolean initialize) {
@@ -96,6 +103,19 @@ public class HomeController implements Initializable {
             List<Movie> filteredMovies = allMovies.stream().filter(movie -> movie.getGenre().contains(Genre.valueOf(genre))).toList();
             observableMovies.addAll(filteredMovies);
         }
+    }
+
+    public void filterMovies(String genre, String query) {
+        observableMovies.clear();
+
+        List<Movie> filteredMovies = allMovies.stream()
+                .filter(movie -> (genre == null || genre.isEmpty() || movie.getGenre().contains(Genre.valueOf(genre))) &&
+                        (query == null || query.isEmpty() ||
+                                movie.getTitle().toLowerCase().contains(query.toLowerCase()) ||
+                                movie.getDescription().toLowerCase().contains(query.toLowerCase())))
+                .toList();
+
+        observableMovies.addAll(filteredMovies);
     }
 
 
