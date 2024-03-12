@@ -28,36 +28,6 @@ class HomeControllerTest {
 
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"ACTION", "COMEDY"})
-    void testFilterMoviesByGenre(String val) {
-        // Act
-        homeController.filterMoviesByGenre(val);
-
-        // Assert
-        List<Movie> expectedMovies = homeController.allMovies.stream()
-                .filter(movie -> movie.getGenre().contains(Genre.valueOf(val)))
-                .collect(Collectors.toList());
-        assertThat(homeController.observableMovies).containsExactlyElementsOf(expectedMovies);
-    }
-
-    @Test
-    void testFilterMoviesByGenreWithNullGenre() {
-        // Act
-        homeController.filterMoviesByGenre(null);
-
-        // Assert
-        assertThat(homeController.observableMovies).hasSameSizeAs(homeController.allMovies);
-    }
-
-
-    @Test
-    void testInitializeMovies() {
-        // Assert
-        assertThat(homeController.observableMovies).hasSize(5);
-    }
-
-
     @Test
     void testSortMoviesAscending() {
         // Act
@@ -85,5 +55,106 @@ class HomeControllerTest {
         assertThat(homeController.observableMovies).containsExactlyElementsOf(sortedMovies);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"ACTION", "COMEDY"})
+    void testFilterByGenre_shouldReturnMoviesForSelectedGenre(String genre) {
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre("", genre);
+
+        // Assert
+        List<Movie> expectedMovies = homeController.allMovies.stream()
+                .filter(movie -> movie.getGenre().contains(Genre.valueOf(genre)))
+                .collect(Collectors.toList());
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedMovies);
+    }
+
+    @Test
+    void testFilterByEmptyParameters_shouldReturnAllMovies() {
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre("", "");
+
+        // Assert
+        assertThat(result).hasSameSizeAs(homeController.allMovies);
+    }
+
+    @Test
+    void testFilterByTitle_shouldReturnMatchingMovie_fullTitle() {
+        // Arrange
+        String title = "Inception";
+
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), "");
+
+        // Assert
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getTitle()).contains(title);
+    }
+    @Test
+    void testFilterByDescription_shouldReturnMatchingMovie_fullDescription() {
+        // Arrange
+        String description = "dream-stealing";
+
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(description.toLowerCase(), "");
+
+        // Assert
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getDescription()).contains(description);
+    }
+
+    @Test
+    void testFilterByTitle_shouldReturnMatchingMovies_partialTitle() {
+        // Arrange
+        String title = "In";
+
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), "");
+
+        // Assert
+        assertThat(result).hasSize(4);
+    }
+
+
+    @Test
+    void testFilterByNonexistentQuery_shouldReturnEmptyList() {
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre("NotFound", "");
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void testFilterByPartialTitleAndGenre_shouldReturnMatchingMovie() {
+        // Arrange
+        String title = "In";
+        Genre genre = Genre.ACTION;
+
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), genre.toString());
+
+        // Assert
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getTitle()).contains(title);
+        assertThat(result.get(0).getGenre()).contains(genre);
+    }
+
+    @Test
+    void testFilterByDescriptionAndGenre_shouldReturnMatchingMovie() {
+        // Arrange
+        String description = "dream-stealing";
+        Genre genre = Genre.SCIENCE_FICTION;
+
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(description, genre.toString());
+
+        // Assert
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getDescription()).contains(description);
+        assertThat(result.get(0).getGenre()).contains(genre);
+    }
+
 
 }
+
+
