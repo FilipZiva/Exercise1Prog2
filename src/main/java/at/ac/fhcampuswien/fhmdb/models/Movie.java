@@ -52,4 +52,16 @@ public class Movie {
     public double getRating() {
         return rating;
     }
+
+    public List<String> getMainCast() {
+        return mainCast;
+    }
+
+    public List<String> getDirectors() {
+        return directors;
+    }
+
+    public List<String> getWriters() {
+        return writers;
+    }
 }

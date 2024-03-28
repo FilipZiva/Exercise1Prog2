@@ -8,15 +8,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HomeControllerTest {
 
     private HomeController homeController;
+    private List<Movie> dummyMovies;
 
     @BeforeEach
     public void setUp() {
@@ -24,6 +28,19 @@ class HomeControllerTest {
         homeController = new HomeController();
         homeController.observableMovies = observableMovies;
         homeController.initializeMovies();
+
+
+        dummyMovies = Arrays.asList(
+                new Movie("movie_1_id", "abcdefghijklm", "...", Arrays.asList("Action"), 2012, "...", 120,
+                        Arrays.asList("Director 1"), Arrays.asList("Writer 1", "Writer 2"),
+                        Arrays.asList("Actor 1", "Actor 2"), 3.5),
+                new Movie("movie_2_id", "Movie 23333", "...", Arrays.asList("Comedy"), 2022, "...", 100,
+                        Arrays.asList("Director 2","Director 1"), Arrays.asList("Writer 3"),
+                        Arrays.asList("Actor 2", "Actor 3", "Actor 2"), 4.2),
+                new Movie("movie_3_id", "Movie 322", "...", Arrays.asList("Drama"), 2004, "...", 90,
+                        Arrays.asList("Director 3"), Arrays.asList("Writer 4"),
+                        Arrays.asList("Actor 1"), 2.8)
+        );
 
     }
 
@@ -82,7 +99,7 @@ class HomeControllerTest {
         String title = "Inception";
 
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), "", "", "");
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(title, "", "", "");
 
         // Assert
         assertThat(result).hasSize(1);
@@ -199,6 +216,57 @@ class HomeControllerTest {
     }
 
 
+    @Test
+    void getMostPopularActor_ShouldReturnEmpty_WhenMoviesListIsEmpty() {
+        // Act
+        String mostPopularActor = homeController.getMostPopularActor(Collections.emptyList());
+
+        // Assert
+        assertEquals("", mostPopularActor);
+    }
+
+    @Test
+    void getMostPopularActor_ShouldReturnCorrectActor_WhenListIsNotEmpty() {
+        // Arrange
+        String expectedPopularActor = "Actor 2";
+        // Act
+        String mostPopularActor = homeController.getMostPopularActor(dummyMovies);
+        // Assert
+        assertEquals(expectedPopularActor, mostPopularActor);
+    }
+
+
+    @Test
+    void getLongestMovieTitle_ShouldReturnZero_WhenMoviesListIsEmpty() {
+        // Arrange
+        int expectedResult = 0;
+        // Act
+        int result = homeController.getLongestMovieTitle(Collections.emptyList());
+        // Assert
+        assertEquals(expectedResult, result);
+    }
+    @Test
+    void getLongestMovieTitle_ShouldReturnLengthOfLongestTitle() {
+        assertEquals(dummyMovies.get(0).getTitle().length(), homeController.getLongestMovieTitle(dummyMovies));
+    }
+
+    @Test
+    void countMoviesFrom_ShouldReturnCorrectCount_WhenDirectorIsSpecified() {
+        assertEquals(2, homeController.countMoviesFrom(dummyMovies,"Director 1"));
+    }
+
+    @Test
+    void getMoviesBetweenYears() {
+        // Arrange
+        int startyear = 2000;
+        int endyear = 2015;
+
+        // Act
+        List<Movie> result = homeController.getMoviesBetweenYears(dummyMovies,startyear,endyear);
+
+        // Assert
+        assertThat(result).hasSize(2);
+    }
 }
 
 

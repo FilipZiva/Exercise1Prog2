@@ -15,7 +15,9 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
@@ -174,4 +176,37 @@ public class HomeController implements Initializable {
     public List<Movie> getAllMovies() {
         return allMovies;
     }
+
+
+    public String getMostPopularActor(List<Movie> movies) {
+        Map<String, Long> actorFrequency = movies.stream()
+                .flatMap(movie -> movie.getMainCast().stream())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        long maxFrequency = actorFrequency.values().stream()
+                .max(Long::compare)
+                .orElse(0L);
+
+        return actorFrequency.entrySet().stream()
+                .filter(entry -> entry.getValue() == maxFrequency)
+                .map(Map.Entry::getKey).collect(Collectors.joining());
+    }
+
+    public int getLongestMovieTitle(List<Movie> movies) {
+        return movies.stream()
+                .mapToInt(movie ->movie.getTitle().length())
+                .max().orElse(0);
+    }
+
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        return movies.stream()
+                .filter(movie -> movie.getDirectors().stream().anyMatch(d -> d.equals(director)))
+                .count();
+    }
+
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        return movies.stream().filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
+                .collect(Collectors.toList());
+    }
+
 }
