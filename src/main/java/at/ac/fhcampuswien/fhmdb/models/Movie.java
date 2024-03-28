@@ -1,7 +1,5 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Movie {
@@ -16,11 +14,12 @@ public class Movie {
     private final List<String> writers;
     private final List<String> mainCast;
     private final double rating;
+
     public Movie(String id, String title, String description, List<String> genre, int releaseYear, String imgUrl, int lengthInMinutes, List<String> directors, List<String> writers, List<String> mainCast, double rating) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.genre= genre;
+        this.genre = genre;
         this.releaseYear = releaseYear;
         this.imgUrl = imgUrl;
         this.lengthInMinutes = lengthInMinutes;
@@ -30,6 +29,9 @@ public class Movie {
         this.rating = rating;
     }
 
+    public String getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;
@@ -43,6 +45,11 @@ public class Movie {
         return genre;
     }
 
+    public int getReleaseYear() {
+        return releaseYear;
+    }
 
-
+    public double getRating() {
+        return rating;
+    }
 }

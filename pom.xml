@@ -17,33 +17,28 @@
         <mockito.junit.jupiter.version>4.0.0</mockito.junit.jupiter.version>
         <spring-framework.version>6.1.3</spring-framework.version>
         <spring-boot.version>3.2.4</spring-boot.version>
-        <jackson.version>2.14.0</jackson.version> <!-- Jackson Version -->
+        <jackson.version>2.14.0</jackson.version>
     </properties>
 
     <dependencies>
-        <!-- Deine vorhandenen Abhängigkeiten -->
-
         <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
-
         <!-- Spring Framework Dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring-framework.version}</version>
         </dependency>
-
         <!-- Spring Boot Web Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
-
         <!-- Jackson Dependencies for JSON handling -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -71,7 +66,6 @@
             <artifactId>javafx-fxml</artifactId>
             <version>17.0.2</version>
         </dependency>
-
         <!-- JUnit 5 dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -92,14 +86,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
         <!-- Jfoenix for UI -->
         <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
             <version>9.0.10</version>
         </dependency>
-
         <!-- Mockito for mocking in tests -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -114,7 +106,6 @@
             <version>${mockito.junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-
         <!-- AssertJ for fluent assertion in tests -->
         <dependency>
             <groupId>org.assertj</groupId>

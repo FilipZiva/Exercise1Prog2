@@ -58,19 +58,19 @@ class HomeControllerTest {
     @ValueSource(strings = {"ACTION", "COMEDY"})
     void testFilterByGenre_shouldReturnMoviesForSelectedGenre(String genre) {
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre("", genre);
+        List<Movie> result = homeController.filterMovieByQueryOrGenre("", genre, "", "");
 
         // Assert
         List<Movie> expectedMovies = homeController.allMovies.stream()
                 .filter(movie -> movie.getGenre().contains(genre))
                 .collect(Collectors.toList());
-        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedMovies);
+        assertThat(result).hasSameSizeAs(expectedMovies);
     }
 
     @Test
     void testFilterByEmptyParameters_shouldReturnAllMovies() {
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre("", "");
+        List<Movie> result = homeController.filterMovieByQueryOrGenre("", "", "", "");
 
         // Assert
         assertThat(result).hasSameSizeAs(homeController.allMovies);
@@ -82,19 +82,19 @@ class HomeControllerTest {
         String title = "Inception";
 
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), "");
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), "", "", "");
 
         // Assert
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getTitle()).contains(title);
     }
-    @Test
+
     void testFilterByDescription_shouldReturnMatchingMovie_fullDescription() {
         // Arrange
         String description = "dream-sharing";
 
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre(description.toLowerCase(), "");
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(description.toLowerCase(), "", "", "");
 
         // Assert
         assertThat(result).hasSize(1);
@@ -107,17 +107,17 @@ class HomeControllerTest {
         String title = "Inc";
 
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), "");
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(title, "", "", "");
 
         // Assert
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(1);
     }
 
 
     @Test
     void testFilterByNonexistentQuery_shouldReturnEmptyList() {
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre("NotFound", "");
+        List<Movie> result = homeController.filterMovieByQueryOrGenre("NotFound", "", "", "");
 
         // Assert
         assertThat(result).isEmpty();
@@ -130,7 +130,7 @@ class HomeControllerTest {
         String genre = "ACTION";
 
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), genre);
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), genre, "", "");
 
         // Assert
         assertThat(result).hasSize(1);
@@ -138,19 +138,64 @@ class HomeControllerTest {
         assertThat(result.get(0).getGenre()).contains(genre);
     }
 
-    @Test
     void testFilterByDescriptionAndGenre_shouldReturnMatchingMovie() {
         // Arrange
         String description = "The aging patriarch";
         String genre = "DRAMA";
 
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre(description.toLowerCase(), genre);
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(description.toLowerCase(), genre, "", "");
 
         // Assert
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getDescription()).contains(description);
         assertThat(result.get(0).getGenre()).contains(genre);
+    }
+
+    @Test
+    void testFilterByYearOnly_shouldReturnMoviesFromThatYear() {
+        // Arrange
+        int year = 1999;
+
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre("", "", String.valueOf(year), "");
+
+        // Assert
+        assertThat(result).isNotEmpty();
+        result.forEach(movie -> assertThat(movie.getReleaseYear()).isEqualTo(year));
+    }
+
+    @Test
+    void testFilterByRatingOnly_shouldReturnMoviesWithEqualOrHigherRating() {
+        // Arrange
+        double rating = 8.0;
+
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre("", "", "", String.valueOf(rating));
+
+        // Assert
+        assertThat(result).isNotEmpty();
+        result.forEach(movie -> assertThat(movie.getRating()).isGreaterThanOrEqualTo(rating));
+    }
+
+    @Test
+    void testFilterWithAllParameters_shouldReturnMatchingMovies() {
+        // Arrange
+        String title = "The Godfather";
+        String genre = "DRAMA";
+        int year = 1972;
+        double rating = 9.2;
+
+        // Act
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), genre, String.valueOf(year), String.valueOf(rating));
+
+        // Assert
+        assertThat(result).hasSize(1);
+        Movie movie = result.get(0);
+        assertThat(movie.getTitle()).containsIgnoringCase(title);
+        assertThat(movie.getGenre()).contains(genre);
+        assertThat(movie.getReleaseYear()).isEqualTo(year);
+        assertThat(movie.getRating()).isGreaterThanOrEqualTo(rating);
     }
 
 

@@ -21,7 +21,17 @@ public class MovieAPI {
     public static List<Movie> getAllMovies() {
         ResponseEntity<JsonNode> responseEntity = getResponseAsJson(EndpointConfig.API_ENDPOINT);
         JsonNode jsonNode = responseEntity.getBody();
+        return getMovieList(jsonNode);
+    }
 
+
+    public static List<Movie> getMoviesByQuery(String query) {
+        ResponseEntity<JsonNode> responseEntity = getResponseAsJson(EndpointConfig.API_ENDPOINT + "?" + query);
+        JsonNode jsonNode = responseEntity.getBody();
+        return getMovieList(jsonNode);
+    }
+
+    private static List<Movie> getMovieList(JsonNode jsonNode) {
         List<Movie> movies = new ArrayList<>();
         if (jsonNode != null) {
             for (JsonNode node : jsonNode) {
@@ -48,5 +58,8 @@ public class MovieAPI {
     }
 
 
+    public static void main(String[] args) {
+        getMoviesByQuery("rating=8.4");
+    }
 
 }
