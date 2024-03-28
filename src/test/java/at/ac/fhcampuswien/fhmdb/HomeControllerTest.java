@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -63,7 +62,7 @@ class HomeControllerTest {
 
         // Assert
         List<Movie> expectedMovies = homeController.allMovies.stream()
-                .filter(movie -> movie.getGenre().contains(Genre.valueOf(genre)))
+                .filter(movie -> movie.getGenre().contains(genre))
                 .collect(Collectors.toList());
         assertThat(result).containsExactlyInAnyOrderElementsOf(expectedMovies);
     }
@@ -92,7 +91,7 @@ class HomeControllerTest {
     @Test
     void testFilterByDescription_shouldReturnMatchingMovie_fullDescription() {
         // Arrange
-        String description = "dream-stealing";
+        String description = "dream-sharing";
 
         // Act
         List<Movie> result = homeController.filterMovieByQueryOrGenre(description.toLowerCase(), "");
@@ -105,13 +104,13 @@ class HomeControllerTest {
     @Test
     void testFilterByTitle_shouldReturnMatchingMovies_partialTitle() {
         // Arrange
-        String title = "In";
+        String title = "Inc";
 
         // Act
         List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), "");
 
         // Assert
-        assertThat(result).hasSize(4);
+        assertThat(result).hasSize(2);
     }
 
 
@@ -127,11 +126,11 @@ class HomeControllerTest {
     @Test
     void testFilterByPartialTitleAndGenre_shouldReturnMatchingMovie() {
         // Arrange
-        String title = "In";
-        Genre genre = Genre.ACTION;
+        String title = "Inc";
+        String genre = "ACTION";
 
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), genre.toString());
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(title.toLowerCase(), genre);
 
         // Assert
         assertThat(result).hasSize(1);
@@ -142,11 +141,11 @@ class HomeControllerTest {
     @Test
     void testFilterByDescriptionAndGenre_shouldReturnMatchingMovie() {
         // Arrange
-        String description = "dream-stealing";
-        Genre genre = Genre.SCIENCE_FICTION;
+        String description = "The aging patriarch";
+        String genre = "DRAMA";
 
         // Act
-        List<Movie> result = homeController.filterMovieByQueryOrGenre(description, genre.toString());
+        List<Movie> result = homeController.filterMovieByQueryOrGenre(description.toLowerCase(), genre);
 
         // Assert
         assertThat(result).hasSize(1);

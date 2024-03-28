@@ -1,7 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.service.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -13,10 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
@@ -57,13 +54,19 @@ public class HomeController implements Initializable {
     }
 
     public void initializeMovies() {
-        allMovies = Movie.initializeMovies();
+        allMovies = MovieAPI.getAllMovies();
         observableMovies.addAll(allMovies);
     }
 
     public void initializeGenre() {
         genreComboBox.setPromptText("Filter by Genre");
-        genreComboBox.getItems().addAll(Arrays.stream(Genre.values()).map(Enum::name).toList());
+
+         Set<String> uniqueGenres = allMovies.stream()
+             .flatMap(movie -> movie.getGenre().stream())
+             .collect(Collectors.toSet());
+        genreComboBox.getItems().addAll(uniqueGenres);
+        List<String> sortedGenres = uniqueGenres.stream().sorted().toList();
+        genreComboBox.getItems().setAll(sortedGenres);
     }
 
     private void handleSearchbarFilter() {
@@ -101,7 +104,7 @@ public class HomeController implements Initializable {
     public List<Movie> filterMovieByQueryOrGenre(String searchQuery, String selectedGenre) {
         return allMovies.stream()
                 .filter(movie -> (searchQuery.isEmpty() || movie.getTitle().toLowerCase().contains(searchQuery) || movie.getDescription().toLowerCase().contains(searchQuery)))
-                .filter(movie -> (selectedGenre.isEmpty() || movie.getGenre().contains(Genre.valueOf(selectedGenre))))
+                .filter(movie -> selectedGenre.isEmpty() || movie.getGenre().stream().anyMatch(genre -> genre.equalsIgnoreCase(selectedGenre)))
                 .collect(Collectors.toList());
     }
 
