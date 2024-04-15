@@ -1,17 +1,36 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Movie {
+    private final String id;
     private final String title;
     private final String description;
-    private final List<Genre> genre;
-    public Movie(String title, String description, List<Genre> genre) {
+    private final List<String> genre;
+    private final int releaseYear;
+    private final String imgUrl;
+    private final int lengthInMinutes;
+    private final List<String> directors;
+    private final List<String> writers;
+    private final List<String> mainCast;
+    private final double rating;
+
+    public Movie(String id, String title, String description, List<String> genre, int releaseYear, String imgUrl, int lengthInMinutes, List<String> directors, List<String> writers, List<String> mainCast, double rating) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.genre = genre;
+        this.releaseYear = releaseYear;
+        this.imgUrl = imgUrl;
+        this.lengthInMinutes = lengthInMinutes;
+        this.directors = directors;
+        this.writers = writers;
+        this.mainCast = mainCast;
+        this.rating = rating;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -22,19 +41,27 @@ public class Movie {
         return description;
     }
 
-    public List<Genre> getGenre() {
+    public List<String> getGenre() {
         return genre;
     }
 
-    public static List<Movie> initializeMovies() {
-        List<Movie> movies = new ArrayList<>();
-        movies.add(new Movie("Inception", "A dream-stealing thief attempts a risky mind-plant.", Arrays.asList(Genre.ACTION, Genre.SCIENCE_FICTION, Genre.THRILLER)));
-        movies.add(new Movie("The Grand Budapest Hotel", "A concierge and a lobby boy solve a murder mystery.", Arrays.asList(Genre.COMEDY, Genre.ADVENTURE, Genre.CRIME)));
-        movies.add(new Movie("Interstellar", "Astronauts venture through a wormhole to find a new home for humanity.", Arrays.asList(Genre.ADVENTURE, Genre.DRAMA, Genre.SCIENCE_FICTION)));
-        movies.add(new Movie("The Silence of the Lambs", "An FBI trainee seeks help from an imprisoned cannibal to catch a killer.", Arrays.asList(Genre.CRIME, Genre.DRAMA, Genre.THRILLER)));
-        movies.add(new Movie("La La Land", "Two artists fall in love while pursuing their dreams in Los Angeles.", Arrays.asList(Genre.DRAMA, Genre.MUSICAL, Genre.ROMANCE)));
-
-        return movies;
+    public int getReleaseYear() {
+        return releaseYear;
     }
 
+    public double getRating() {
+        return rating;
+    }
+
+    public List<String> getMainCast() {
+        return mainCast;
+    }
+
+    public List<String> getDirectors() {
+        return directors;
+    }
+
+    public List<String> getWriters() {
+        return writers;
+    }
 }
