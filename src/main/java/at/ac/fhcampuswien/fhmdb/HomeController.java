@@ -146,19 +146,25 @@ public class HomeController implements Initializable {
             queryBuilder.append("query=").append(searchQuery);
         }
         if (!selectedGenre.isEmpty()) {
-            if (queryBuilder.length() > 0) queryBuilder.append("&");
+            if (!queryBuilder.isEmpty()) {
+                queryBuilder.append("&");
+            }
             queryBuilder.append("genre=").append(selectedGenre);
         }
         if (!selectedYear.isEmpty()) {
-            if (queryBuilder.length() > 0) queryBuilder.append("&");
+            if (!queryBuilder.isEmpty()) {
+                queryBuilder.append("&");
+            }
             queryBuilder.append("releaseYear=").append(selectedYear);
         }
         if (!selectedRating.isEmpty()) {
-            if (queryBuilder.length() > 0) queryBuilder.append("&");
+            if (!queryBuilder.isEmpty()) {
+                queryBuilder.append("&");
+            }
             queryBuilder.append("ratingFrom=").append(selectedRating);
         }
 
-        if (queryBuilder.length() == 0) {
+        if (queryBuilder.isEmpty()) {
             return MovieAPI.getAllMovies();
         }
 
@@ -194,7 +200,7 @@ public class HomeController implements Initializable {
 
     public int getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
-                .mapToInt(movie ->movie.getTitle().length())
+                .mapToInt(movie -> movie.getTitle().length())
                 .max().orElse(0);
     }
 
