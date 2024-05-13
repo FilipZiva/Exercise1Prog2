@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.fhmdb.ui;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Background;
@@ -19,8 +20,10 @@ public class MovieCell extends ListCell<Movie> {
     private final Label year = new Label();
     private final Label rating = new Label();
     private final HBox genreYearRatingBox = new HBox(genre, year, rating);
-    private final VBox layout = new VBox(title, detail, genreYearRatingBox);
-
+    private final Button showDetailsButton = new Button("Show Details");
+    private final Button watchlistButton = new Button("Add to Watchlist");
+    private final HBox buttonsBox = new HBox(showDetailsButton, watchlistButton);
+    private final VBox layout = new VBox(title, detail, genreYearRatingBox, buttonsBox);
 
     @Override
     protected void updateItem(Movie movie, boolean empty) {
@@ -47,22 +50,24 @@ public class MovieCell extends ListCell<Movie> {
             year.setTextFill(Color.WHITE);
             rating.setTextFill(Color.WHITE);
 
+            // Button styles and actions
+            showDetailsButton.setOnAction(e -> {});
+            watchlistButton.setOnAction(e -> {});
+            buttonsBox.setSpacing(10);
+            buttonsBox.setAlignment(Pos.CENTER_RIGHT);
 
-            // color scheme
+            // Color scheme and layout
             title.getStyleClass().add("text-yellow");
             detail.getStyleClass().add("text-white");
             layout.setBackground(new Background(new BackgroundFill(Color.web("#454545"), null, null)));
 
-            // layout
-            title.getFont();
-            title.fontProperty().set(Font.font(20));
+            title.setFont(Font.font(20));
             detail.setMaxWidth(this.getScene().getWidth() - 30);
             detail.setWrapText(true);
             layout.setPadding(new Insets(10));
-            layout.spacingProperty().set(10);
-            layout.alignmentProperty().set(javafx.geometry.Pos.CENTER_LEFT);
+            layout.setSpacing(10);
+            layout.setAlignment(Pos.CENTER_LEFT);
             setGraphic(layout);
         }
     }
 }
-
