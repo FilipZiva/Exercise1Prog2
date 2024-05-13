@@ -31,15 +31,9 @@ class HomeControllerTest {
 
 
         dummyMovies = Arrays.asList(
-                new Movie("movie_1_id", "abcdefghijklm", "...", Arrays.asList("Action"), 2012, "...", 120,
-                        Arrays.asList("Director 1"), Arrays.asList("Writer 1", "Writer 2"),
-                        Arrays.asList("Actor 1", "Actor 2"), 3.5),
-                new Movie("movie_2_id", "Movie 23333", "...", Arrays.asList("Comedy"), 2022, "...", 100,
-                        Arrays.asList("Director 2","Director 1"), Arrays.asList("Writer 3"),
-                        Arrays.asList("Actor 2", "Actor 3", "Actor 2"), 4.2),
-                new Movie("movie_3_id", "Movie 322", "...", Arrays.asList("Drama"), 2004, "...", 90,
-                        Arrays.asList("Director 3"), Arrays.asList("Writer 4"),
-                        Arrays.asList("Actor 1"), 2.8)
+                new Movie("movie_1_id", "abcdefghijklm", "...", "Action", 2012, 120,"...", 3.5),
+                new Movie("movie_2_id", "Movie 23333", "...", "Comedy", 2022,100, "...", 4.2),
+                new Movie("movie_3_id", "Movie 322", "...", "Drama", 2004, 90,"...", 2.8)
         );
 
     }
@@ -216,24 +210,24 @@ class HomeControllerTest {
     }
 
 
-    @Test
-    void getMostPopularActor_ShouldReturnEmpty_WhenMoviesListIsEmpty() {
-        // Act
-        String mostPopularActor = homeController.getMostPopularActor(Collections.emptyList());
+//    @Test
+//    void getMostPopularActor_ShouldReturnEmpty_WhenMoviesListIsEmpty() {
+//        // Act
+//        String mostPopularActor = homeController.getMostPopularActor(Collections.emptyList());
+//
+//        // Assert
+//        assertEquals("", mostPopularActor);
+//    }
 
-        // Assert
-        assertEquals("", mostPopularActor);
-    }
-
-    @Test
-    void getMostPopularActor_ShouldReturnCorrectActor_WhenListIsNotEmpty() {
-        // Arrange
-        String expectedPopularActor = "Actor 2";
-        // Act
-        String mostPopularActor = homeController.getMostPopularActor(dummyMovies);
-        // Assert
-        assertEquals(expectedPopularActor, mostPopularActor);
-    }
+//    @Test
+//    void getMostPopularActor_ShouldReturnCorrectActor_WhenListIsNotEmpty() {
+//        // Arrange
+//        String expectedPopularActor = "Actor 2";
+//        // Act
+//        String mostPopularActor = homeController.getMostPopularActor(dummyMovies);
+//        // Assert
+//        assertEquals(expectedPopularActor, mostPopularActor);
+//    }
 
 
     @Test
@@ -250,10 +244,10 @@ class HomeControllerTest {
         assertEquals(dummyMovies.get(0).getTitle().length(), homeController.getLongestMovieTitle(dummyMovies));
     }
 
-    @Test
-    void countMoviesFrom_ShouldReturnCorrectCount_WhenDirectorIsSpecified() {
-        assertEquals(2, homeController.countMoviesFrom(dummyMovies,"Director 1"));
-    }
+//    @Test
+//    void countMoviesFrom_ShouldReturnCorrectCount_WhenDirectorIsSpecified() {
+//        assertEquals(2, homeController.countMoviesFrom(dummyMovies,"Director 1"));
+//    }
 
     @Test
     void getMoviesBetweenYears() {

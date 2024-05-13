@@ -13,10 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,6 +40,7 @@ public class HomeController implements Initializable {
     public JFXButton resetBtn;
 
     public List<Movie> allMovies;
+    public MovieAPI movieAPI;
 
     ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
@@ -64,16 +62,17 @@ public class HomeController implements Initializable {
     }
 
     public void initializeMovies() {
-        allMovies = MovieAPI.getAllMovies();
+        movieAPI = new MovieAPI();
+        allMovies = movieAPI.getAllMovies();
         observableMovies.addAll(allMovies);
     }
 
     public void initializeGenre() {
         List<String> uniqueGenres = allMovies.stream()
-                .flatMap(movie -> movie.getGenre().stream())
+                .flatMap(movie -> Arrays.stream(movie.getGenre().split(", ")))
                 .distinct()
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
 
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(uniqueGenres);
@@ -165,10 +164,10 @@ public class HomeController implements Initializable {
         }
 
         if (queryBuilder.isEmpty()) {
-            return MovieAPI.getAllMovies();
+            return movieAPI.getAllMovies();
         }
 
-        return MovieAPI.getMoviesByQuery(queryBuilder.toString());
+        return movieAPI.getMoviesByQuery(queryBuilder.toString());
     }
 
     public void filterMovieByTitleAscDesc(boolean initialize) {
@@ -184,19 +183,19 @@ public class HomeController implements Initializable {
     }
 
 
-    public String getMostPopularActor(List<Movie> movies) {
-        Map<String, Long> actorFrequency = movies.stream()
-                .flatMap(movie -> movie.getMainCast().stream())
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-
-        long maxFrequency = actorFrequency.values().stream()
-                .max(Long::compare)
-                .orElse(0L);
-
-        return actorFrequency.entrySet().stream()
-                .filter(entry -> entry.getValue() == maxFrequency)
-                .map(Map.Entry::getKey).collect(Collectors.joining());
-    }
+//    public String getMostPopularActor(List<Movie> movies) {
+//        Map<String, Long> actorFrequency = movies.stream()
+//                .flatMap(movie -> movie.getMainCast().stream())
+//                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+//
+//        long maxFrequency = actorFrequency.values().stream()
+//                .max(Long::compare)
+//                .orElse(0L);
+//
+//        return actorFrequency.entrySet().stream()
+//                .filter(entry -> entry.getValue() == maxFrequency)
+//                .map(Map.Entry::getKey).collect(Collectors.joining());
+//    }
 
     public int getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
@@ -204,11 +203,11 @@ public class HomeController implements Initializable {
                 .max().orElse(0);
     }
 
-    public long countMoviesFrom(List<Movie> movies, String director) {
-        return movies.stream()
-                .filter(movie -> movie.getDirectors().stream().anyMatch(d -> d.equals(director)))
-                .count();
-    }
+//    public long countMoviesFrom(List<Movie> movies, String director) {
+//        return movies.stream()
+//                .filter(movie -> movie.getDirectors().stream().anyMatch(d -> d.equals(director)))
+//                .count();
+//    }
 
     public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
         return movies.stream().filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)

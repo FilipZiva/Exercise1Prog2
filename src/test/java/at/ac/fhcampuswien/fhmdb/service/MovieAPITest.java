@@ -9,17 +9,22 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MovieAPITest {
+    MovieAPI movieAPI;
+    @BeforeEach
+    void setUp() {
+        movieAPI = new MovieAPI();
+    }
 
     @Test
     void testGetAllMoviesIntegration() {
         // Act
-        List<Movie> movies = MovieAPI.getAllMovies();
+        List<Movie> movies = movieAPI.getAllMovies();
 
         // Assert
         assertNotNull(movies);
         assertFalse(movies.isEmpty());
         movies.forEach(movie -> {
-            assertNotNull(movie.getId());
+            assertNotNull(movie.getApiId());
             assertNotNull(movie.getTitle());
         });
     }

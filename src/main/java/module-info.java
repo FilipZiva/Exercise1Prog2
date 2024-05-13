@@ -4,16 +4,22 @@ module at.ac.fhcampuswien.fhmdb {
 
     requires com.jfoenix;
 
-    // Füge Spring-Module hinzu
+    // Spring-Module
     requires spring.context;
     requires spring.beans;
     requires spring.core;
-    requires spring.web; // Hinzugefügt für RestTemplate
+    requires spring.web;
 
-    // Füge Jackson-Module hinzu
+    // H2 Database
+    requires com.h2database;
+
+    // Jackson-Module
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.annotation;
+    requires static lombok;
+    requires ormlite.jdbc;
+    requires java.sql;
 
     // Öffnet Pakete für Spring, JavaFX und Jackson
     opens at.ac.fhcampuswien.fhmdb to javafx.fxml, spring.core, spring.beans, spring.context, spring.web, com.fasterxml.jackson.databind;
@@ -22,3 +28,4 @@ module at.ac.fhcampuswien.fhmdb {
     exports at.ac.fhcampuswien.fhmdb;
     exports at.ac.fhcampuswien.fhmdb.service;
 }
+
