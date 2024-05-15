@@ -12,7 +12,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class WatchlistRepositoryTest {
-    private WatchlistRepository repository;
+    private WatchlistRepository watchlistRepository;
+    private MovieRepository movieRepository;
 
     @BeforeEach
     void setUp() {
@@ -21,30 +22,39 @@ class WatchlistRepositoryTest {
                 new Movie("api_2_id", "Movie 2", "...", "Comedy", 2022, 100, "...", 4.2),
                 new Movie("api_3_id", "Movie 3", "...", "Drama", 2004, 90, "...", 2.8)
         );
-        List<WatchlistMovie> dummyWatchlistMovies = Arrays.asList(
-                new WatchlistMovie(1, "api_1_id", dummyMovies.get(0)),
-                new WatchlistMovie(2, "api_2_id", dummyMovies.get(1)),
-                new WatchlistMovie(3, "api_3_id", dummyMovies.get(2))
-        );
 
-        repository = new WatchlistRepository();
-        for (WatchlistMovie movie : dummyWatchlistMovies) {
-            repository.addToWatchlist(movie);
+        movieRepository = new MovieRepository();
+        watchlistRepository = new WatchlistRepository();
+
+        // Alle Filme hinzufügen
+        movieRepository.addAllMovies(dummyMovies);
+
+        // WatchlistMovie Einträge erstellen und hinzufügen
+        for (Movie movie : dummyMovies) {
+            WatchlistMovie watchlistMovie = new WatchlistMovie();
+            watchlistMovie.setMovie(movie);
+            watchlistRepository.addToWatchlist(watchlistMovie);
         }
     }
 
     @AfterEach
     void tearDown() {
-        List<WatchlistMovie> watchlistMovies = repository.getWatchlist();
-        for (WatchlistMovie movie : watchlistMovies) {
-            repository.removeFromWatchlist(movie.getApiId());
+        // Alle WatchlistMovie Einträge entfernen
+        List<WatchlistMovie> watchlistMovies = watchlistRepository.getWatchlist();
+        if (watchlistMovies != null) {
+            for (WatchlistMovie movie : watchlistMovies) {
+                watchlistRepository.removeFromWatchlist(movie.getMovie().getApiId());
+            }
         }
+
+        // Alle Movie Einträge entfernen
+        movieRepository.removeAllMovies();
     }
 
     @Test
     void testGetWatchlist() {
         // Act
-        List<WatchlistMovie> movies = repository.getWatchlist();
+        List<WatchlistMovie> movies = watchlistRepository.getWatchlist();
         // Assert
         assertNotNull(movies);
         assertEquals(3, movies.size());
@@ -54,10 +64,13 @@ class WatchlistRepositoryTest {
     void testAddToWatchlist() {
         // Arrange
         Movie newMovie = new Movie("api_4_id", "New Movie", "...", "Sci-Fi", 2020, 130, "...", 4.5);
-        WatchlistMovie newWatchlistMovie = new WatchlistMovie(4, "api_4_id", newMovie);
+        movieRepository.addAllMovies(Arrays.asList(newMovie));
+
+        WatchlistMovie newWatchlistMovie = new WatchlistMovie();
+        newWatchlistMovie.setMovie(newMovie);
         // Act
-        int result = repository.addToWatchlist(newWatchlistMovie);
-        List<WatchlistMovie> movies = repository.getWatchlist();
+        int result = watchlistRepository.addToWatchlist(newWatchlistMovie);
+        List<WatchlistMovie> movies = watchlistRepository.getWatchlist();
         // Assert
         assertEquals(1, result);
         assertEquals(4, movies.size());
@@ -66,9 +79,9 @@ class WatchlistRepositoryTest {
     @Test
     void testRemoveFromWatchlist() {
         // Act
-        int removedCount = repository.removeFromWatchlist("api_2_id");
+        int removedCount = watchlistRepository.removeFromWatchlist("api_2_id");
         // Assert
         assertEquals(1, removedCount);
-        assertEquals(2, repository.getWatchlist().size());
+        assertEquals(2, watchlistRepository.getWatchlist().size());
     }
 }
