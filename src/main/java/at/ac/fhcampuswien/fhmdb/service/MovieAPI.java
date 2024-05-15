@@ -56,9 +56,15 @@ public class MovieAPI {
                 int releaseYear = node.get("releaseYear").asInt();
                 String imgUrl = node.get("imgUrl").asText();
                 int lengthInMinutes = node.get("lengthInMinutes").asInt();
+                List<String> directors = new ArrayList<>();
+                node.get("directors").forEach(directorNode -> directors.add(directorNode.asText()));
+                List<String> writers = new ArrayList<>();
+                node.get("writers").forEach(writerNode -> writers.add(writerNode.asText()));
+                List<String> mainCast = new ArrayList<>();
+                node.get("mainCast").forEach(castNode -> mainCast.add(castNode.asText()));
                 double rating = node.get("rating").asDouble();
 
-                movies.add(new Movie(id, title, description, genreString, releaseYear, lengthInMinutes, imgUrl, rating));
+                movies.add(new Movie(id, title, description, genreString, releaseYear, imgUrl, lengthInMinutes, directors, writers, mainCast, rating));
             }
         }
 

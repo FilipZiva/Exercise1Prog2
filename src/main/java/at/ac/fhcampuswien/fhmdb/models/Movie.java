@@ -42,8 +42,12 @@ public class Movie {
     @DatabaseField
     private double rating;
 
+    private final List<String> directors;
+    private final List<String> writers;
+    private final List<String> mainCast;
 
-    public Movie(String apiId, String title, String description, String genre, int releaseYear, int lengthInMinutes, String imgUrl, double rating) {
+
+    public Movie(String apiId, String title, String description, String genre, int releaseYear, String imgUrl, int lengthInMinutes, List<String> directors, List<String> writers, List<String> mainCast, double rating) {
         this.apiId = apiId;
         this.title = title;
         this.description = description;
@@ -52,6 +56,9 @@ public class Movie {
         this.lengthInMinutes = lengthInMinutes;
         this.imgUrl = imgUrl;
         this.rating = rating;
+        this.directors = directors;
+        this.writers = writers;
+        this.mainCast = mainCast;
     }
 
     public static String genresToString(List<String> genres){

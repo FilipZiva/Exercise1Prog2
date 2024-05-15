@@ -18,9 +18,15 @@ class WatchlistRepositoryTest {
     @BeforeEach
     void setUp() {
         List<Movie> dummyMovies = Arrays.asList(
-                new Movie("api_1_id", "Movie 1", "...", "Action", 2012, 120, "...", 3.5),
-                new Movie("api_2_id", "Movie 2", "...", "Comedy", 2022, 100, "...", 4.2),
-                new Movie("api_3_id", "Movie 3", "...", "Drama", 2004, 90, "...", 2.8)
+                new Movie("movie_1_id", "abcdefghijklm", "...", String.valueOf(Arrays.asList("Action")), 2012, "...", 120,
+                        Arrays.asList("Director 1"), Arrays.asList("Writer 1", "Writer 2"),
+                        Arrays.asList("Actor 1", "Actor 2"), 3.5),
+                new Movie("movie_2_id", "Movie 23333", "...", String.valueOf(Arrays.asList("Comedy")), 2022, "...", 100,
+                        Arrays.asList("Director 2","Director 1"), Arrays.asList("Writer 3"),
+                        Arrays.asList("Actor 2", "Actor 3", "Actor 2"), 4.2),
+                new Movie("movie_3_id", "Movie 322", "...", String.valueOf(Arrays.asList("Drama")), 2004, "...", 90,
+                        Arrays.asList("Director 3"), Arrays.asList("Writer 4"),
+                        Arrays.asList("Actor 1"), 2.8)
         );
 
         movieRepository = new MovieRepository();
@@ -63,7 +69,9 @@ class WatchlistRepositoryTest {
     @Test
     void testAddToWatchlist() {
         // Arrange
-        Movie newMovie = new Movie("api_4_id", "New Movie", "...", "Sci-Fi", 2020, 130, "...", 4.5);
+        Movie newMovie = new Movie("movie_4_id", "Movie 322", "...", String.valueOf(Arrays.asList("Drama")), 2004, "...", 90,
+                Arrays.asList("Director 3"), Arrays.asList("Writer 4"),
+                Arrays.asList("Actor 1"), 2.8);
         movieRepository.addAllMovies(Arrays.asList(newMovie));
 
         WatchlistMovie newWatchlistMovie = new WatchlistMovie();
@@ -79,7 +87,7 @@ class WatchlistRepositoryTest {
     @Test
     void testRemoveFromWatchlist() {
         // Act
-        int removedCount = watchlistRepository.removeFromWatchlist("api_2_id");
+        int removedCount = watchlistRepository.removeFromWatchlist("movie_2_id");
         // Assert
         assertEquals(1, removedCount);
         assertEquals(2, watchlistRepository.getWatchlist().size());
