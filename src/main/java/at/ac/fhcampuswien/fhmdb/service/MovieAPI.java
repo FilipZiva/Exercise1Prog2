@@ -6,18 +6,24 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-@AllArgsConstructor
-@NoArgsConstructor
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class MovieAPI {
-    private MovieRepository movieRepository;
+
+    private final MovieRepository movieRepository;
+
+    public MovieAPI() {
+        this.movieRepository = new MovieRepository();
+    }
 
     public ResponseEntity<JsonNode> getResponseAsJson(String url) {
         RestTemplate restTemplate = new RestTemplate();
@@ -55,11 +61,23 @@ public class MovieAPI {
                 movies.add(new Movie(id, title, description, genreString, releaseYear, lengthInMinutes, imgUrl, rating));
             }
         }
+
+        handleMoviesInDatabase(movies);
         return movies;
     }
 
+    private void handleMoviesInDatabase(List<Movie> movies) {
+        List<Movie> existingMovies = movieRepository.getAllMovies();
+        Set<String> existingMovieTitles = existingMovies.stream()
+                .map(Movie::getTitle)
+                .collect(Collectors.toSet());
 
-    public static void main(String[] args) {
+        List<Movie> newMovies = movies.stream()
+                .filter(movie -> !existingMovieTitles.contains(movie.getTitle()))
+                .collect(Collectors.toList());
+
+        if (!newMovies.isEmpty()) {
+            movieRepository.addAllMovies(newMovies);
+        }
     }
-
 }

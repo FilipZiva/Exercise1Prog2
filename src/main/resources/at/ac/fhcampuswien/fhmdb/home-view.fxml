@@ -21,16 +21,8 @@
             </padding>
          </Label>
          <Label styleClass="text-white" stylesheets="@styles.css" text="Welcome to FHMDb!" />
-         <Label style="-fx-background-color: F5C518; -fx-padding: 5 10; -fx-text-fill: black;" text="Home">
-            <font>
-               <Font size="14.0" />
-            </font>
-         </Label>
-         <Label style="-fx-background-color: F5C518; -fx-padding: 5 10; -fx-text-fill: black;" text="Watchlist">
-            <font>
-               <Font size="14.0" />
-            </font>
-         </Label>
+         <Label fx:id="homeLabel" style="-fx-background-color: F5C518; -fx-padding: 5 10; -fx-text-fill: black;" text="Home" />
+         <Label fx:id="watchlistLabel" style="-fx-background-color: F5C518; -fx-padding: 5 10; -fx-text-fill: black;" text="Watchlist" />
       </children>
    </HBox>
    <HBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">

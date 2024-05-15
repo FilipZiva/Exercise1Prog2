@@ -1,6 +1,8 @@
 package at.ac.fhcampuswien.fhmdb.ui;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
+import at.ac.fhcampuswien.fhmdb.service.WatchlistService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -21,9 +23,17 @@ public class MovieCell extends ListCell<Movie> {
     private final Label rating = new Label();
     private final HBox genreYearRatingBox = new HBox(genre, year, rating);
     private final Button showDetailsButton = new Button("Show Details");
-    private final Button watchlistButton = new Button("Add to Watchlist");
+    private final Button watchlistButton = new Button();
     private final HBox buttonsBox = new HBox(showDetailsButton, watchlistButton);
     private final VBox layout = new VBox(title, detail, genreYearRatingBox, buttonsBox);
+
+    private final WatchlistService watchlistService;
+    private final boolean isInWatchlistView;
+
+    public MovieCell(WatchlistService watchlistService, boolean isInWatchlistView) {
+        this.watchlistService = watchlistService;
+        this.isInWatchlistView = isInWatchlistView;
+    }
 
     @Override
     protected void updateItem(Movie movie, boolean empty) {
@@ -40,7 +50,7 @@ public class MovieCell extends ListCell<Movie> {
                             ? movie.getDescription()
                             : "No description available"
             );
-            genre.setText(movie.getGenre().toString());
+            genre.setText(movie.getGenre());
             year.setText("Year: " + movie.getReleaseYear());
             rating.setText("Rating: " + String.format("%.1f", movie.getRating()));
 
@@ -50,13 +60,19 @@ public class MovieCell extends ListCell<Movie> {
             year.setTextFill(Color.WHITE);
             rating.setTextFill(Color.WHITE);
 
-            // Button styles and actions
             showDetailsButton.setOnAction(e -> {});
-            watchlistButton.setOnAction(e -> {});
+            if (isInWatchlistView) {
+                watchlistButton.setText("Remove from Watchlist");
+                watchlistButton.setOnAction(e -> watchlistService.removeFromWatchlist(movie.getApiId()));
+            } else {
+                watchlistButton.setText("Add to Watchlist");
+                WatchlistMovie watchlistMovie = new WatchlistMovie();
+                watchlistMovie.setMovie(movie);
+                watchlistButton.setOnAction(e -> watchlistService.addToWatchlist(watchlistMovie));
+            }
             buttonsBox.setSpacing(10);
             buttonsBox.setAlignment(Pos.CENTER_RIGHT);
 
-            // Color scheme and layout
             title.getStyleClass().add("text-yellow");
             detail.getStyleClass().add("text-white");
             layout.setBackground(new Background(new BackgroundFill(Color.web("#454545"), null, null)));

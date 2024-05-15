@@ -1,7 +1,9 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
 import at.ac.fhcampuswien.fhmdb.service.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.service.WatchlistService;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -10,11 +12,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
@@ -39,8 +44,16 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton resetBtn;
 
+    @FXML
+    public Label homeLabel;
+
+    @FXML
+    public Label watchlistLabel;
+
     public List<Movie> allMovies;
     public MovieAPI movieAPI;
+    private WatchlistService watchlistService =  new WatchlistService();
+    private boolean isInWatchlistView = false;
 
     ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
@@ -54,14 +67,37 @@ public class HomeController implements Initializable {
         handleResetButton();
         handleSortingMechanism();
         handleSearchbarFilter();
+        handleNavigation();
+    }
+
+    private void handleNavigation() {
+        watchlistService =  new WatchlistService();
+        homeLabel.setOnMouseClicked(event -> {
+            if (isInWatchlistView) {
+                isInWatchlistView = false;
+                initializeMovies();
+                initializeUi();
+                initializeGenre();
+                initializeYear();
+                initializeRating();
+            }
+        });
+
+        watchlistLabel.setOnMouseClicked(event -> {
+            if (!isInWatchlistView) {
+                isInWatchlistView = true;
+                loadWatchlist();
+            }
+        });
     }
 
     public void initializeUi() {
         movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(movieListView -> new MovieCell());
+        movieListView.setCellFactory(movieListView -> new MovieCell(watchlistService, isInWatchlistView));
     }
 
     public void initializeMovies() {
+        observableMovies.clear();
         movieAPI = new MovieAPI();
         allMovies = movieAPI.getAllMovies();
         observableMovies.addAll(allMovies);
@@ -212,6 +248,15 @@ public class HomeController implements Initializable {
     public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
         return movies.stream().filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
                 .collect(Collectors.toList());
+    }
+
+    private void loadWatchlist() {
+        observableMovies.clear();
+        List<WatchlistMovie> watchlistMovies = watchlistService.getWatchlist();
+        List<Movie> movies = watchlistMovies.stream()
+                .map(WatchlistMovie::getMovie)
+                .collect(Collectors.toList());
+        observableMovies.setAll(movies);
     }
 
 }
