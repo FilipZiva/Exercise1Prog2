@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class MovieAPI {
 
-    private final MovieRepository movieRepository;
+    private MovieRepository movieRepository;
 
     public MovieAPI() {
         this.movieRepository = new MovieRepository();

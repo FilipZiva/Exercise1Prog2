@@ -42,8 +42,6 @@ public class Movie {
     @DatabaseField
     private double rating;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true)
-    private WatchlistMovie watchlistMovie;
 
     public Movie(String apiId, String title, String description, String genre, int releaseYear, int lengthInMinutes, String imgUrl, double rating) {
         this.apiId = apiId;
