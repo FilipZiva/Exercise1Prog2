@@ -21,14 +21,18 @@ public class MovieCell extends ListCell<Movie> {
     private final Label genre = new Label();
     private final Label year = new Label();
     private final Label rating = new Label();
-    private final HBox genreYearRatingBox = new HBox(genre, year, rating);
+    private final Label directors = new Label();
+    private final Label writers = new Label();
+    private final Label mainCast = new Label();
+    private final VBox detailsBox = new VBox(year, rating, directors, writers, mainCast);
     private final Button showDetailsButton = new Button("Show Details");
     private final Button watchlistButton = new Button();
     private final HBox buttonsBox = new HBox(showDetailsButton, watchlistButton);
-    private final VBox layout = new VBox(title, detail, genreYearRatingBox, buttonsBox);
+    private final VBox layout = new VBox(title, detail, genre, buttonsBox);
 
     private final WatchlistService watchlistService;
     private final boolean isInWatchlistView;
+    private boolean detailsVisible = false;
 
     public MovieCell(WatchlistService watchlistService, boolean isInWatchlistView) {
         this.watchlistService = watchlistService;
@@ -50,20 +54,42 @@ public class MovieCell extends ListCell<Movie> {
                             ? movie.getDescription()
                             : "No description available"
             );
-            genre.setText(movie.getGenre());
+            genre.setText("Genre: " + movie.getGenre());
             year.setText("Year: " + movie.getReleaseYear());
             rating.setText("Rating: " + String.format("%.1f", movie.getRating()));
 
-            genreYearRatingBox.setSpacing(10);
-            genreYearRatingBox.setAlignment(Pos.CENTER_LEFT);
+            directors.setText("Directors: " + (movie.getDirectors() != null ? String.join(", ", movie.getDirectors()) : "N/A"));
+            writers.setText("Writers: " + (movie.getWriters() != null ? String.join(", ", movie.getWriters()) : "N/A"));
+            mainCast.setText("Main Cast: " + (movie.getMainCast() != null ? String.join(", ", movie.getMainCast()) : "N/A"));
+
+            detailsBox.setVisible(detailsVisible);
+            detailsBox.setSpacing(5);
+            detailsBox.setAlignment(Pos.CENTER_LEFT);
+
             genre.setTextFill(Color.WHITE);
             year.setTextFill(Color.WHITE);
             rating.setTextFill(Color.WHITE);
+            directors.setTextFill(Color.WHITE);
+            writers.setTextFill(Color.WHITE);
+            mainCast.setTextFill(Color.WHITE);
 
-            showDetailsButton.setOnAction(e -> {});
+            showDetailsButton.setOnAction(e -> {
+                detailsVisible = !detailsVisible;
+                detailsBox.setVisible(detailsVisible);
+                showDetailsButton.setText(detailsVisible ? "Hide Details" : "Show Details");
+                if (detailsVisible) {
+                    layout.getChildren().add(3, detailsBox);
+                } else {
+                    layout.getChildren().remove(detailsBox);
+                }
+            });
+
             if (isInWatchlistView) {
                 watchlistButton.setText("Remove from Watchlist");
-                watchlistButton.setOnAction(e -> watchlistService.removeFromWatchlist(movie.getApiId()));
+                watchlistButton.setOnAction(e -> {
+                    watchlistService.removeFromWatchlist(movie.getApiId());
+                    getListView().getItems().remove(movie);
+                });
             } else {
                 watchlistButton.setText("Add to Watchlist");
                 WatchlistMovie watchlistMovie = new WatchlistMovie();
