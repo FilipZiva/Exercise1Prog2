@@ -4,6 +4,7 @@ import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
 import at.ac.fhcampuswien.fhmdb.service.WatchlistService;
+import at.ac.fhcampuswien.fhmdb.util.PopupUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -91,7 +92,7 @@ public class MovieCell extends ListCell<Movie> {
                     try {
                         watchlistService.removeFromWatchlist(movie.getApiId());
                     } catch (ApplicationException ex) {
-                        throw new RuntimeException(ex);
+                        PopupUtil.showPopup(ex);
                     }
                     getListView().getItems().remove(movie);
                 });
@@ -103,7 +104,7 @@ public class MovieCell extends ListCell<Movie> {
                     try {
                         watchlistService.addToWatchlist(watchlistMovie);
                     } catch (ApplicationException ex) {
-                        throw new RuntimeException(ex);
+                        PopupUtil.showPopup(ex);
                     }
                 });
             }

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static at.ac.fhcampuswien.fhmdb.util.PopupUtil.showPopup;
 
 @Service
 public class MovieApiService {
@@ -46,6 +47,7 @@ public class MovieApiService {
             JsonNode jsonNode = responseEntity.getBody();
             return getMovieList(jsonNode);
         } catch (Exception e) {
+            showPopup(new ApplicationException(ExceptionType.MOVIE_API, ErrorCodes.API_RESPONSE_ERROR, "Error processing API response: " + e.getMessage()));
             return movieRepository.getAllMovies();
         }
     }

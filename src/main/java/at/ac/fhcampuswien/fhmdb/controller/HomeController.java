@@ -23,6 +23,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static at.ac.fhcampuswien.fhmdb.util.PopupUtil.showPopup;
+
 @Getter
 @Setter
 public class HomeController implements Initializable {
@@ -53,6 +55,7 @@ public class HomeController implements Initializable {
     @FXML
     public Label watchlistLabel;
 
+    @Getter
     public List<Movie> allMovies;
     public MovieApiService movieApiService;
     private WatchlistService watchlistService;
@@ -64,37 +67,33 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             initializeMovies();
-        } catch (ApplicationException e) {
-            throw new RuntimeException(e);
-        }
-        initializeUi();
-        initializeGenre();
-        initializeYear();
-        initializeRating();
-        handleResetButton();
-        handleSortingMechanism();
-        handleSearchbarFilter();
-        try {
+            initializeUi();
+            initializeGenre();
+            initializeYear();
+            initializeRating();
+            handleResetButton();
+            handleSortingMechanism();
+            handleSearchbarFilter();
             handleNavigation();
         } catch (ApplicationException e) {
-            throw new RuntimeException(e);
+            showPopup(e);
         }
     }
 
     private void handleNavigation() throws ApplicationException {
-        watchlistService =  new WatchlistService();
+        watchlistService = new WatchlistService();
         homeLabel.setOnMouseClicked(event -> {
             if (isInWatchlistView) {
                 isInWatchlistView = false;
                 try {
                     initializeMovies();
+                    initializeUi();
+                    initializeGenre();
+                    initializeYear();
+                    initializeRating();
                 } catch (ApplicationException e) {
-                    throw new RuntimeException(e);
+                    showPopup(e);
                 }
-                initializeUi();
-                initializeGenre();
-                initializeYear();
-                initializeRating();
             }
         });
 
@@ -104,7 +103,7 @@ public class HomeController implements Initializable {
                 try {
                     loadWatchlist();
                 } catch (ApplicationException e) {
-                    throw new RuntimeException(e);
+                    showPopup(e);
                 }
             }
         });
@@ -160,7 +159,7 @@ public class HomeController implements Initializable {
             try {
                 applyFilters();
             } catch (ApplicationException e) {
-                throw new RuntimeException(e);
+                showPopup(e);
             }
         });
     }
@@ -193,9 +192,7 @@ public class HomeController implements Initializable {
         String selectedYear = (yearComboBox.getValue() == null) ? "" : yearComboBox.getValue().toString();
         String selectedRating = (ratingComboBox.getValue() == null) ? "" : ratingComboBox.getValue().toString();
 
-
         List<Movie> filteredMovies = filterMovieByQueryOrGenre(searchQuery, selectedGenre, selectedYear, selectedRating);
-
         observableMovies.setAll(filteredMovies);
     }
 
@@ -239,11 +236,6 @@ public class HomeController implements Initializable {
         }
     }
 
-    public List<Movie> getAllMovies() {
-        return allMovies;
-    }
-
-
     public String getMostPopularActor(List<Movie> movies) {
         Map<String, Long> actorFrequency = movies.stream()
                 .flatMap(movie -> movie.getMainCast().stream())
@@ -255,13 +247,15 @@ public class HomeController implements Initializable {
 
         return actorFrequency.entrySet().stream()
                 .filter(entry -> entry.getValue() == maxFrequency)
-                .map(Map.Entry::getKey).collect(Collectors.joining());
+                .map(Map.Entry::getKey)
+                .collect(Collectors.joining());
     }
 
     public int getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
                 .mapToInt(movie -> movie.getTitle().length())
-                .max().orElse(0);
+                .max()
+                .orElse(0);
     }
 
     public long countMoviesFrom(List<Movie> movies, String director) {
@@ -271,7 +265,8 @@ public class HomeController implements Initializable {
     }
 
     public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
-        return movies.stream().filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
+        return movies.stream()
+                .filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
                 .collect(Collectors.toList());
     }
 
