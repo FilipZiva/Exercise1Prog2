@@ -6,6 +6,7 @@ import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
 import at.ac.fhcampuswien.fhmdb.service.MovieApiService;
 import at.ac.fhcampuswien.fhmdb.service.WatchlistService;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
+import at.ac.fhcampuswien.fhmdb.util.PopupUtil;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -15,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,8 +24,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static at.ac.fhcampuswien.fhmdb.util.PopupUtil.showPopup;
 
 @Getter
 @Setter
@@ -35,7 +35,7 @@ public class HomeController implements Initializable {
     public TextField searchField;
 
     @FXML
-    public JFXListView movieListView;
+    public JFXListView<Movie> movieListView;
 
     @FXML
     public JFXComboBox<Object> genreComboBox;
@@ -55,7 +55,9 @@ public class HomeController implements Initializable {
     @FXML
     public Label watchlistLabel;
 
-    @Getter
+    @FXML
+    public HBox filterContainer;
+
     public List<Movie> allMovies;
     public MovieApiService movieApiService;
     private WatchlistService watchlistService;
@@ -76,7 +78,7 @@ public class HomeController implements Initializable {
             handleSearchbarFilter();
             handleNavigation();
         } catch (ApplicationException e) {
-            showPopup(e);
+            PopupUtil.showPopup(e);
         }
     }
 
@@ -91,8 +93,9 @@ public class HomeController implements Initializable {
                     initializeGenre();
                     initializeYear();
                     initializeRating();
+                    setFilterVisibility(true);
                 } catch (ApplicationException e) {
-                    showPopup(e);
+                    PopupUtil.showPopup(e);
                 }
             }
         });
@@ -102,8 +105,9 @@ public class HomeController implements Initializable {
                 isInWatchlistView = true;
                 try {
                     loadWatchlist();
+                    setFilterVisibility(false);
                 } catch (ApplicationException e) {
-                    showPopup(e);
+                    PopupUtil.showPopup(e);
                 }
             }
         });
@@ -126,7 +130,7 @@ public class HomeController implements Initializable {
                 .flatMap(movie -> Arrays.stream(movie.getGenre().split(", ")))
                 .distinct()
                 .sorted()
-                .toList();
+                .collect(Collectors.toList());
 
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(uniqueGenres);
@@ -159,7 +163,7 @@ public class HomeController implements Initializable {
             try {
                 applyFilters();
             } catch (ApplicationException e) {
-                showPopup(e);
+                PopupUtil.showPopup(e);
             }
         });
     }
@@ -279,4 +283,8 @@ public class HomeController implements Initializable {
         observableMovies.setAll(movies);
     }
 
+    private void setFilterVisibility(boolean isVisible) {
+        filterContainer.setManaged(isVisible);
+        filterContainer.setVisible(isVisible);
+    }
 }

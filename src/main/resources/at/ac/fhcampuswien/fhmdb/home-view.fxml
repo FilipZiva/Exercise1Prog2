@@ -25,7 +25,7 @@
          <Label fx:id="watchlistLabel" style="-fx-background-color: F5C518; -fx-padding: 5 10; -fx-text-fill: black;" text="Watchlist" />
       </children>
    </HBox>
-   <HBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
+   <HBox fx:id="filterContainer" spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
       <children>
          <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)" />
          <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb" />
