@@ -1,8 +1,9 @@
 package at.ac.fhcampuswien.fhmdb.controller;
 
+import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
-import at.ac.fhcampuswien.fhmdb.service.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.service.MovieApiService;
 import at.ac.fhcampuswien.fhmdb.service.WatchlistService;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
@@ -53,15 +54,19 @@ public class HomeController implements Initializable {
     public Label watchlistLabel;
 
     public List<Movie> allMovies;
-    public MovieAPI movieAPI;
-    private WatchlistService watchlistService =  new WatchlistService();
+    public MovieApiService movieApiService;
+    private WatchlistService watchlistService;
     private boolean isInWatchlistView = false;
 
     ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeMovies();
+        try {
+            initializeMovies();
+        } catch (ApplicationException e) {
+            throw new RuntimeException(e);
+        }
         initializeUi();
         initializeGenre();
         initializeYear();
@@ -69,15 +74,23 @@ public class HomeController implements Initializable {
         handleResetButton();
         handleSortingMechanism();
         handleSearchbarFilter();
-        handleNavigation();
+        try {
+            handleNavigation();
+        } catch (ApplicationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void handleNavigation() {
+    private void handleNavigation() throws ApplicationException {
         watchlistService =  new WatchlistService();
         homeLabel.setOnMouseClicked(event -> {
             if (isInWatchlistView) {
                 isInWatchlistView = false;
-                initializeMovies();
+                try {
+                    initializeMovies();
+                } catch (ApplicationException e) {
+                    throw new RuntimeException(e);
+                }
                 initializeUi();
                 initializeGenre();
                 initializeYear();
@@ -88,7 +101,11 @@ public class HomeController implements Initializable {
         watchlistLabel.setOnMouseClicked(event -> {
             if (!isInWatchlistView) {
                 isInWatchlistView = true;
-                loadWatchlist();
+                try {
+                    loadWatchlist();
+                } catch (ApplicationException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
@@ -98,10 +115,10 @@ public class HomeController implements Initializable {
         movieListView.setCellFactory(movieListView -> new MovieCell(watchlistService, isInWatchlistView));
     }
 
-    public void initializeMovies() {
+    public void initializeMovies() throws ApplicationException {
         observableMovies.clear();
-        movieAPI = new MovieAPI();
-        allMovies = movieAPI.getAllMovies();
+        movieApiService = new MovieApiService();
+        allMovies = movieApiService.getAllMovies();
         observableMovies.addAll(allMovies);
     }
 
@@ -139,7 +156,13 @@ public class HomeController implements Initializable {
     }
 
     private void handleSearchbarFilter() {
-        searchBtn.setOnAction(actionEvent -> applyFilters());
+        searchBtn.setOnAction(actionEvent -> {
+            try {
+                applyFilters();
+            } catch (ApplicationException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private void handleSortingMechanism() {
@@ -164,7 +187,7 @@ public class HomeController implements Initializable {
         });
     }
 
-    private void applyFilters() {
+    private void applyFilters() throws ApplicationException {
         String searchQuery = searchField.getText() == null ? "" : searchField.getText().trim().toLowerCase();
         String selectedGenre = (genreComboBox.getValue() == null) ? "" : genreComboBox.getValue().toString();
         String selectedYear = (yearComboBox.getValue() == null) ? "" : yearComboBox.getValue().toString();
@@ -176,7 +199,7 @@ public class HomeController implements Initializable {
         observableMovies.setAll(filteredMovies);
     }
 
-    public List<Movie> filterMovieByQueryOrGenre(String searchQuery, String selectedGenre, String selectedYear, String selectedRating) {
+    public List<Movie> filterMovieByQueryOrGenre(String searchQuery, String selectedGenre, String selectedYear, String selectedRating) throws ApplicationException {
         StringBuilder queryBuilder = new StringBuilder();
 
         if (!searchQuery.isEmpty()) {
@@ -202,10 +225,10 @@ public class HomeController implements Initializable {
         }
 
         if (queryBuilder.isEmpty()) {
-            return movieAPI.getAllMovies();
+            return movieApiService.getAllMovies();
         }
 
-        return movieAPI.getMoviesByQuery(queryBuilder.toString());
+        return movieApiService.getMoviesByQuery(queryBuilder.toString());
     }
 
     public void filterMovieByTitleAscDesc(boolean initialize) {
@@ -252,7 +275,7 @@ public class HomeController implements Initializable {
                 .collect(Collectors.toList());
     }
 
-    private void loadWatchlist() {
+    private void loadWatchlist() throws ApplicationException {
         observableMovies.clear();
         List<WatchlistMovie> watchlistMovies = watchlistService.getWatchlist();
         List<Movie> movies = watchlistMovies.stream()

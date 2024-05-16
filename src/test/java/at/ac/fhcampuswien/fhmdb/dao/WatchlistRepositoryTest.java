@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.dao;
 
+import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
 import org.junit.jupiter.api.AfterEach;
@@ -16,7 +17,7 @@ class WatchlistRepositoryTest {
     private MovieRepository movieRepository;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws ApplicationException {
         List<Movie> dummyMovies = Arrays.asList(
                 new Movie("movie_1_id", "abcdefghijklm", "...", String.valueOf(Arrays.asList("Action")), 2012, "...", 120,
                         Arrays.asList("Director 1"), Arrays.asList("Writer 1", "Writer 2"),
@@ -32,10 +33,8 @@ class WatchlistRepositoryTest {
         movieRepository = new MovieRepository();
         watchlistRepository = new WatchlistRepository();
 
-        // Alle Filme hinzufügen
         movieRepository.addAllMovies(dummyMovies);
 
-        // WatchlistMovie Einträge erstellen und hinzufügen
         for (Movie movie : dummyMovies) {
             WatchlistMovie watchlistMovie = new WatchlistMovie();
             watchlistMovie.setMovie(movie);
@@ -44,21 +43,18 @@ class WatchlistRepositoryTest {
     }
 
     @AfterEach
-    void tearDown() {
-        // Alle WatchlistMovie Einträge entfernen
+    void tearDown() throws ApplicationException {
         List<WatchlistMovie> watchlistMovies = watchlistRepository.getWatchlist();
         if (watchlistMovies != null) {
             for (WatchlistMovie movie : watchlistMovies) {
                 watchlistRepository.removeFromWatchlist(movie.getMovie().getApiId());
             }
         }
-
-        // Alle Movie Einträge entfernen
         movieRepository.removeAllMovies();
     }
 
     @Test
-    void testGetWatchlist() {
+    void testGetWatchlist() throws ApplicationException {
         // Act
         List<WatchlistMovie> movies = watchlistRepository.getWatchlist();
         // Assert
@@ -67,7 +63,7 @@ class WatchlistRepositoryTest {
     }
 
     @Test
-    void testAddToWatchlist() {
+    void testAddToWatchlist() throws ApplicationException {
         // Arrange
         Movie newMovie = new Movie("movie_4_id", "Movie 322", "...", String.valueOf(Arrays.asList("Drama")), 2004, "...", 90,
                 Arrays.asList("Director 3"), Arrays.asList("Writer 4"),
@@ -85,7 +81,7 @@ class WatchlistRepositoryTest {
     }
 
     @Test
-    void testRemoveFromWatchlist() {
+    void testRemoveFromWatchlist() throws ApplicationException {
         // Act
         int removedCount = watchlistRepository.removeFromWatchlist("movie_2_id");
         // Assert

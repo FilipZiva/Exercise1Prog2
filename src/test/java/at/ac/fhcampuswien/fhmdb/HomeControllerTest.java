@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.controller.HomeController;
+import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class HomeControllerTest {
 
@@ -24,7 +26,7 @@ class HomeControllerTest {
     private List<Movie> dummyMovies;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws ApplicationException {
         ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
         homeController = new HomeController();
         homeController.setObservableMovies(observableMovies);
@@ -43,6 +45,11 @@ class HomeControllerTest {
                         Arrays.asList("Actor 1"), 2.8)
         );
 
+    }
+    @Test
+    public void testObservableMoviesNotNull() {
+        ObservableList<Movie> observableMovies = homeController.getObservableMovies();
+        assertNotNull(observableMovies);
     }
 
     @Test
@@ -74,7 +81,7 @@ class HomeControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"ACTION", "COMEDY"})
-    void testFilterByGenre_shouldReturnMoviesForSelectedGenre(String genre) {
+    void testFilterByGenre_shouldReturnMoviesForSelectedGenre(String genre) throws ApplicationException {
         // Act
         List<Movie> result = homeController.filterMovieByQueryOrGenre("", genre, "", "");
 
@@ -86,7 +93,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void testFilterByEmptyParameters_shouldReturnAllMovies() {
+    void testFilterByEmptyParameters_shouldReturnAllMovies() throws ApplicationException {
         // Act
         List<Movie> result = homeController.filterMovieByQueryOrGenre("", "", "", "");
 
@@ -95,7 +102,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void testFilterByTitle_shouldReturnMatchingMovie_fullTitle() {
+    void testFilterByTitle_shouldReturnMatchingMovie_fullTitle() throws ApplicationException {
         // Arrange
         String title = "Inception";
 
@@ -107,7 +114,7 @@ class HomeControllerTest {
         assertThat(result.get(0).getTitle()).contains(title);
     }
 
-    void testFilterByDescription_shouldReturnMatchingMovie_fullDescription() {
+    void testFilterByDescription_shouldReturnMatchingMovie_fullDescription() throws ApplicationException {
         // Arrange
         String description = "dream-sharing";
 
@@ -120,7 +127,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void testFilterByTitle_shouldReturnMatchingMovies_partialTitle() {
+    void testFilterByTitle_shouldReturnMatchingMovies_partialTitle() throws ApplicationException {
         // Arrange
         String title = "Inc";
 
@@ -133,7 +140,7 @@ class HomeControllerTest {
 
 
     @Test
-    void testFilterByNonexistentQuery_shouldReturnEmptyList() {
+    void testFilterByNonexistentQuery_shouldReturnEmptyList() throws ApplicationException {
         // Act
         List<Movie> result = homeController.filterMovieByQueryOrGenre("NotFound", "", "", "");
 
@@ -142,7 +149,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void testFilterByPartialTitleAndGenre_shouldReturnMatchingMovie() {
+    void testFilterByPartialTitleAndGenre_shouldReturnMatchingMovie() throws ApplicationException {
         // Arrange
         String title = "Inc";
         String genre = "ACTION";
@@ -156,7 +163,7 @@ class HomeControllerTest {
         assertThat(result.get(0).getGenre()).contains(genre);
     }
 
-    void testFilterByDescriptionAndGenre_shouldReturnMatchingMovie() {
+    void testFilterByDescriptionAndGenre_shouldReturnMatchingMovie() throws ApplicationException {
         // Arrange
         String description = "The aging patriarch";
         String genre = "DRAMA";
@@ -171,7 +178,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void testFilterByYearOnly_shouldReturnMoviesFromThatYear() {
+    void testFilterByYearOnly_shouldReturnMoviesFromThatYear() throws ApplicationException {
         // Arrange
         int year = 1999;
 
@@ -184,7 +191,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void testFilterByRatingOnly_shouldReturnMoviesWithEqualOrHigherRating() {
+    void testFilterByRatingOnly_shouldReturnMoviesWithEqualOrHigherRating() throws ApplicationException {
         // Arrange
         double rating = 8.0;
 
@@ -197,7 +204,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void testFilterWithAllParameters_shouldReturnMatchingMovies() {
+    void testFilterWithAllParameters_shouldReturnMatchingMovies() throws ApplicationException {
         // Arrange
         String title = "The Godfather";
         String genre = "DRAMA";
@@ -269,5 +276,3 @@ class HomeControllerTest {
         assertThat(result).hasSize(2);
     }
 }
-
-

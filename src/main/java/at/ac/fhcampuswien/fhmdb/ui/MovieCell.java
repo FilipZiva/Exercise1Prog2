@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.ui;
 
+import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
 import at.ac.fhcampuswien.fhmdb.service.WatchlistService;
@@ -87,14 +88,24 @@ public class MovieCell extends ListCell<Movie> {
             if (isInWatchlistView) {
                 watchlistButton.setText("Remove from Watchlist");
                 watchlistButton.setOnAction(e -> {
-                    watchlistService.removeFromWatchlist(movie.getApiId());
+                    try {
+                        watchlistService.removeFromWatchlist(movie.getApiId());
+                    } catch (ApplicationException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     getListView().getItems().remove(movie);
                 });
             } else {
                 watchlistButton.setText("Add to Watchlist");
                 WatchlistMovie watchlistMovie = new WatchlistMovie();
                 watchlistMovie.setMovie(movie);
-                watchlistButton.setOnAction(e -> watchlistService.addToWatchlist(watchlistMovie));
+                watchlistButton.setOnAction(e -> {
+                    try {
+                        watchlistService.addToWatchlist(watchlistMovie);
+                    } catch (ApplicationException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
             }
             buttonsBox.setSpacing(10);
             buttonsBox.setAlignment(Pos.CENTER_RIGHT);

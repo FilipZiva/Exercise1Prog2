@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.dao;
 
+import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,17 +26,17 @@ class MovieRepositoryTest {
     );
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws ApplicationException {
         repository = new MovieRepository();
         repository.addAllMovies(dummyMovies);
     }
     @AfterEach
-    void tearDown() {
+    void tearDown() throws ApplicationException {
         repository.removeAllMovies();
     }
 
     @Test
-    void testGetAllMovies() {
+    void testGetAllMovies() throws ApplicationException {
         // Act
         List<Movie> movies = repository.getAllMovies();
         // Assert
@@ -44,7 +45,7 @@ class MovieRepositoryTest {
     }
 
     @Test
-    void testRemoveAllMovies() {
+    void testRemoveAllMovies() throws ApplicationException {
         // Act
         int removedCount = repository.removeAllMovies();
         // Assert
@@ -53,7 +54,7 @@ class MovieRepositoryTest {
     }
 
     @Test
-    void testGetMovie() {
+    void testGetMovie() throws ApplicationException {
         // Act
         Movie movie = repository.getMovie(dummyMovies.get(1));
         // Assert
@@ -62,7 +63,7 @@ class MovieRepositoryTest {
     }
 
     @Test
-    void testAddAllMovies() {
+    void testAddAllMovies() throws ApplicationException {
         // Arrange
         assertEquals(3, repository.getAllMovies().size());
         List<Movie> newMovies = Arrays.asList(

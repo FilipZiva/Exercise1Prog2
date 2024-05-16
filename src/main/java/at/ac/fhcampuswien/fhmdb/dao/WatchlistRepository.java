@@ -1,5 +1,9 @@
 package at.ac.fhcampuswien.fhmdb.dao;
 
+
+import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
+import at.ac.fhcampuswien.fhmdb.exception.ErrorCodes;
+import at.ac.fhcampuswien.fhmdb.exception.ExceptionType;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
 import at.ac.fhcampuswien.fhmdb.util.DatabaseUtil;
 import com.j256.ormlite.dao.Dao;
@@ -10,29 +14,31 @@ import java.util.List;
 public class WatchlistRepository {
     private Dao<WatchlistMovie, Long> dao;
 
-    public WatchlistRepository() {
-        dao = DatabaseUtil.getDatabase().getWatchlistDao();
+    public WatchlistRepository() throws ApplicationException {
+        try {
+            dao = DatabaseUtil.getDatabase().getWatchlistDao();
+        } catch (Exception e) {
+            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_DAO_CREATION_ERROR, "Error initializing: " + e.getMessage());
+        }
     }
 
-    public List<WatchlistMovie> getWatchlist() {
+    public List<WatchlistMovie> getWatchlist() throws ApplicationException {
         try {
             return dao.queryForAll();
         } catch (SQLException e) {
-            System.err.println("Error fetching watchlist: " + e.getMessage());
-            return null;
+            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_QUERY_ERROR, "Error fetching watchlist: " + e.getMessage());
         }
     }
 
-    public int addToWatchlist(WatchlistMovie movie) {
+    public int addToWatchlist(WatchlistMovie movie) throws ApplicationException {
         try {
             return dao.create(movie);
         } catch (SQLException e) {
-            System.err.println("Error adding movie to watchlist: " + e.getMessage());
-            return 0;
+            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_INSERT_ERROR, "Error adding movie to watchlist: " + e.getMessage());
         }
     }
 
-    public int removeFromWatchlist(String apiId) {
+    public int removeFromWatchlist(String apiId) throws ApplicationException {
         try {
             List<WatchlistMovie> movies = dao.queryForEq("apiId", apiId);
             if (movies.isEmpty()) {
@@ -40,8 +46,7 @@ public class WatchlistRepository {
             }
             return dao.delete(movies);
         } catch (SQLException e) {
-            System.err.println("Error removing movie from watchlist: " + e.getMessage());
-            return 0;
+            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_DELETE_ERROR, "Error removing movie from watchlist: " + e.getMessage());
         }
     }
 }
