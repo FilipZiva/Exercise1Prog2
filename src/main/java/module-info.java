@@ -21,7 +21,9 @@ module at.ac.fhcampuswien.fhmdb {
     opens at.ac.fhcampuswien.fhmdb to javafx.fxml, spring.core, spring.beans, spring.context, spring.web, com.fasterxml.jackson.databind;
     opens at.ac.fhcampuswien.fhmdb.service to javafx.fxml, spring.beans, spring.context, spring.core, spring.web, com.fasterxml.jackson.databind;
     opens at.ac.fhcampuswien.fhmdb.models to ormlite.jdbc;
+    opens at.ac.fhcampuswien.fhmdb.controller to com.fasterxml.jackson.databind, javafx.fxml, spring.beans, spring.context, spring.core, spring.web;
 
     exports at.ac.fhcampuswien.fhmdb;
     exports at.ac.fhcampuswien.fhmdb.service;
+    exports at.ac.fhcampuswien.fhmdb.controller;
 }

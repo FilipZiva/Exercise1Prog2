@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.controller.HomeController;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,7 +27,7 @@ class HomeControllerTest {
     public void setUp() {
         ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
         homeController = new HomeController();
-        homeController.observableMovies = observableMovies;
+        homeController.setObservableMovies(observableMovies);
         homeController.initializeMovies();
 
 
@@ -53,7 +54,7 @@ class HomeControllerTest {
         List<Movie> sortedMovies = homeController.getAllMovies().stream()
                 .sorted(Comparator.comparing(Movie::getTitle))
                 .collect(Collectors.toList());
-        assertThat(homeController.observableMovies).containsExactlyElementsOf(sortedMovies);
+        assertThat(homeController.getObservableMovies()).containsExactlyElementsOf(sortedMovies);
     }
 
     @Test
@@ -68,7 +69,7 @@ class HomeControllerTest {
         List<Movie> sortedMovies = homeController.getAllMovies().stream()
                 .sorted(Comparator.comparing(Movie::getTitle).reversed())
                 .collect(Collectors.toList());
-        assertThat(homeController.observableMovies).containsExactlyElementsOf(sortedMovies);
+        assertThat(homeController.getObservableMovies()).containsExactlyElementsOf(sortedMovies);
     }
 
     @ParameterizedTest

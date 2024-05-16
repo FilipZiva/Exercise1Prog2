@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.util;
 
+import at.ac.fhcampuswien.fhmdb.config.ApplicationConfig;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
 import com.j256.ormlite.dao.Dao;
@@ -11,11 +12,6 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 
 public class DatabaseUtil {
-
-    public static final String DB_URL = "jdbc:h2:file:./db/fhmdbDB";
-    public static final String user = "FHMDB";
-    public static final String password = "FHMDB";
-
     private static ConnectionSource connectionSource;
 
     private Dao<Movie, Long> movieDao;
@@ -42,7 +38,7 @@ public class DatabaseUtil {
     }
 
     private static void createConnectionSource() throws SQLException {
-        connectionSource = new JdbcConnectionSource(DB_URL, user, password);
+        connectionSource = new JdbcConnectionSource(ApplicationConfig.DB_URL, ApplicationConfig.DB_USER, ApplicationConfig.DB_PASSWORD);
     }
 
     private static void createTables() throws SQLException {

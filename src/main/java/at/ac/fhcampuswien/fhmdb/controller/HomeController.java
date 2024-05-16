@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.fhmdb;
+package at.ac.fhcampuswien.fhmdb.controller;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
@@ -14,12 +14,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class HomeController implements Initializable {
     @FXML
     public JFXButton searchBtn;
