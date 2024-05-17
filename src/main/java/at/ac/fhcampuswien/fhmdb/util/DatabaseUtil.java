@@ -18,12 +18,12 @@ import java.sql.SQLException;
 @Getter
 public class DatabaseUtil {
 
-    public static ConnectionSource connectionSource;
+    protected static ConnectionSource connectionSource;
 
     private final Dao<Movie, Long> movieDao;
     private final Dao<WatchlistMovie, Long> watchlistDao;
 
-    public static DatabaseUtil instance;
+    protected static DatabaseUtil instance;
 
     private DatabaseUtil() throws ApplicationException {
         try {
@@ -43,7 +43,7 @@ public class DatabaseUtil {
         return instance;
     }
 
-    public static void createConnectionSource() throws ApplicationException {
+    protected static void createConnectionSource() throws ApplicationException {
         try {
             connectionSource = new JdbcConnectionSource(ApplicationConfig.DB_URL, ApplicationConfig.DB_USER, ApplicationConfig.DB_PASSWORD);
         } catch (Exception e) {
@@ -51,7 +51,7 @@ public class DatabaseUtil {
         }
     }
 
-    public static void createTables() throws SQLException {
+    protected static void createTables() throws SQLException {
         TableUtils.createTableIfNotExists(connectionSource, Movie.class);
         TableUtils.createTableIfNotExists(connectionSource, WatchlistMovie.class);
     }
