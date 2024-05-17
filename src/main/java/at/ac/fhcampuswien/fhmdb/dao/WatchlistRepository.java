@@ -25,7 +25,7 @@ public class WatchlistRepository {
     public List<WatchlistMovie> getWatchlist() throws ApplicationException {
         try {
             return dao.queryForAll();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_QUERY_ERROR, "Error fetching watchlist: " + e.getMessage());
         }
     }
@@ -33,7 +33,7 @@ public class WatchlistRepository {
     public int addToWatchlist(WatchlistMovie movie) throws ApplicationException {
         try {
             return dao.create(movie);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_INSERT_ERROR, "Error adding movie to watchlist: " + e.getMessage());
         }
     }
@@ -45,7 +45,7 @@ public class WatchlistRepository {
                 return 0;
             }
             return dao.delete(movies);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DELETE_ERROR, "Error removing movie from watchlist: " + e.getMessage());
         }
     }
