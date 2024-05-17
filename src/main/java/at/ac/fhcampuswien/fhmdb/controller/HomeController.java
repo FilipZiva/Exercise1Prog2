@@ -130,7 +130,7 @@ public class HomeController implements Initializable {
                 .flatMap(movie -> Arrays.stream(movie.getGenre().split(", ")))
                 .distinct()
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
 
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(uniqueGenres);

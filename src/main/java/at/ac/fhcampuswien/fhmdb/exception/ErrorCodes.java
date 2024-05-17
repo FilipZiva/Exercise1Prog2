@@ -1,5 +1,8 @@
 package at.ac.fhcampuswien.fhmdb.exception;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorCodes {
     DATABASE_CONNECTION_ERROR(1001),
     DATABASE_TABLE_CREATION_ERROR(1002),
@@ -17,7 +20,4 @@ public enum ErrorCodes {
         this.code = code;
     }
 
-    public int getCode() {
-        return code;
-    }
 }

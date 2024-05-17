@@ -2,7 +2,9 @@ package at.ac.fhcampuswien.fhmdb.util;
 
 import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import javafx.scene.control.Alert;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class PopupUtil {
     private static void showError(String title, String message, String details) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

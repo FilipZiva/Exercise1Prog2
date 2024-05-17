@@ -47,7 +47,7 @@ class HomeControllerTest {
 
     }
     @Test
-    public void testObservableMoviesNotNull() {
+    void testObservableMoviesNotNull() {
         ObservableList<Movie> observableMovies = homeController.getObservableMovies();
         assertNotNull(observableMovies);
     }

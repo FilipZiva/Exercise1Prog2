@@ -20,8 +20,8 @@ public class DatabaseUtil {
 
     private static ConnectionSource connectionSource;
 
-    private Dao<Movie, Long> movieDao;
-    private Dao<WatchlistMovie, Long> watchlistDao;
+    private final Dao<Movie, Long> movieDao;
+    private final Dao<WatchlistMovie, Long> watchlistDao;
 
     private static DatabaseUtil instance;
 
@@ -32,7 +32,7 @@ public class DatabaseUtil {
             watchlistDao = DaoManager.createDao(connectionSource, WatchlistMovie.class);
             createTables();
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_DAO_CREATION_ERROR, e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DAO_CREATION_ERROR, e.getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ public class DatabaseUtil {
         try {
             connectionSource = new JdbcConnectionSource(ApplicationConfig.DB_URL, ApplicationConfig.DB_USER, ApplicationConfig.DB_PASSWORD);
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_CONNECTION_ERROR, e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_CONNECTION_ERROR, e.getMessage());
         }
     }
 
@@ -56,7 +56,7 @@ public class DatabaseUtil {
             TableUtils.createTableIfNotExists(connectionSource, Movie.class);
             TableUtils.createTableIfNotExists(connectionSource, WatchlistMovie.class);
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_TABLE_CREATION_ERROR, e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_TABLE_CREATION_ERROR, e.getMessage());
         }
     }
 

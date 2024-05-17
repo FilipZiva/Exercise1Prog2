@@ -11,13 +11,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class MovieRepository {
-    private Dao<Movie, Long> dao;
+    private final Dao<Movie, Long> dao;
 
     public MovieRepository() throws ApplicationException {
         try {
             dao = DatabaseUtil.getDatabase().getMovieDao();
         } catch (ApplicationException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_DAO_CREATION_ERROR, "Error initializing: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DAO_CREATION_ERROR, "Error initializing: " + e.getMessage());
         }
     }
 
@@ -25,7 +25,7 @@ public class MovieRepository {
         try {
             return dao.queryForAll();
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_QUERY_ERROR, "Error fetching all movies: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_QUERY_ERROR, "Error fetching all movies: " + e.getMessage());
         }
     }
 
@@ -33,7 +33,7 @@ public class MovieRepository {
         try {
             return dao.deleteBuilder().delete();
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_DELETE_ERROR, "Error removing all movies: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DELETE_ERROR, "Error removing all movies: " + e.getMessage());
         }
     }
 
@@ -41,7 +41,7 @@ public class MovieRepository {
         try {
             return dao.queryForSameId(id);
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_QUERY_BY_ID_ERROR, "Error fetching movie by ID: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_QUERY_BY_ID_ERROR, "Error fetching movie by ID: " + e.getMessage());
         }
     }
 
@@ -54,7 +54,7 @@ public class MovieRepository {
             }
             return addedCount;
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_INSERT_ERROR, "Error adding movies: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_INSERT_ERROR, "Error adding movies: " + e.getMessage());
         }
     }
 }

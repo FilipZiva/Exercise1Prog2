@@ -12,13 +12,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class WatchlistRepository {
-    private Dao<WatchlistMovie, Long> dao;
+    private final Dao<WatchlistMovie, Long> dao;
 
     public WatchlistRepository() throws ApplicationException {
         try {
             dao = DatabaseUtil.getDatabase().getWatchlistDao();
         } catch (Exception e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_DAO_CREATION_ERROR, "Error initializing: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DAO_CREATION_ERROR, "Error initializing: " + e.getMessage());
         }
     }
 
@@ -26,7 +26,7 @@ public class WatchlistRepository {
         try {
             return dao.queryForAll();
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_QUERY_ERROR, "Error fetching watchlist: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_QUERY_ERROR, "Error fetching watchlist: " + e.getMessage());
         }
     }
 
@@ -34,7 +34,7 @@ public class WatchlistRepository {
         try {
             return dao.create(movie);
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_INSERT_ERROR, "Error adding movie to watchlist: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_INSERT_ERROR, "Error adding movie to watchlist: " + e.getMessage());
         }
     }
 
@@ -46,7 +46,7 @@ public class WatchlistRepository {
             }
             return dao.delete(movies);
         } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_DELETE_ERROR, "Error removing movie from watchlist: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DELETE_ERROR, "Error removing movie from watchlist: " + e.getMessage());
         }
     }
 }

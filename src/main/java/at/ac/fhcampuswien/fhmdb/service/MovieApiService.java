@@ -28,7 +28,7 @@ public class MovieApiService {
         try {
             this.movieRepository = new MovieRepository();
         } catch (Exception e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_DAO_CREATION_ERROR, "Error initializing: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DAO_CREATION_ERROR, "Error initializing: " + e.getMessage());
         }
     }
 
@@ -37,7 +37,7 @@ public class MovieApiService {
             RestTemplate restTemplate = new RestTemplate();
             return restTemplate.getForEntity(url, JsonNode.class);
         } catch (Exception e) {
-            throw new ApplicationException(ExceptionType.MOVIE_API, ErrorCodes.API_REQUEST_ERROR, "Error sending request to API: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.MOVIE_API_EXCEPTION, ErrorCodes.API_REQUEST_ERROR, "Error sending request to API: " + e.getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ public class MovieApiService {
             JsonNode jsonNode = responseEntity.getBody();
             return getMovieList(jsonNode);
         } catch (Exception e) {
-            showPopup(new ApplicationException(ExceptionType.MOVIE_API, ErrorCodes.API_RESPONSE_ERROR, "Error processing API response: " + e.getMessage()));
+            showPopup(new ApplicationException(ExceptionType.MOVIE_API_EXCEPTION, ErrorCodes.API_RESPONSE_ERROR, "Error processing API response: " + e.getMessage()));
             return movieRepository.getAllMovies();
         }
     }
@@ -58,7 +58,7 @@ public class MovieApiService {
             JsonNode jsonNode = responseEntity.getBody();
             return getMovieList(jsonNode);
         } catch (Exception e) {
-            throw new ApplicationException(ExceptionType.MOVIE_API, ErrorCodes.API_RESPONSE_ERROR, "Error processing API response for query: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.MOVIE_API_EXCEPTION, ErrorCodes.API_RESPONSE_ERROR, "Error processing API response for query: " + e.getMessage());
         }
     }
 
@@ -91,7 +91,7 @@ public class MovieApiService {
             handleMoviesInDatabase(movies);
             return movies;
         } catch (Exception e) {
-            throw new ApplicationException(ExceptionType.MOVIE_API, ErrorCodes.JSON_PROCESSING_ERROR, "Error processing JSON response: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.MOVIE_API_EXCEPTION, ErrorCodes.JSON_PROCESSING_ERROR, "Error processing JSON response: " + e.getMessage());
         }
     }
 
@@ -110,7 +110,7 @@ public class MovieApiService {
                 movieRepository.addAllMovies(newMovies);
             }
         } catch (Exception e) {
-            throw new ApplicationException(ExceptionType.DATABASE, ErrorCodes.DATABASE_QUERY_ERROR, "Error handling movies in database: " + e.getMessage());
+            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_QUERY_ERROR, "Error handling movies in database: " + e.getMessage());
         }
     }
 }

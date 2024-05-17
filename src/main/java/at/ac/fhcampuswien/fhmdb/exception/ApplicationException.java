@@ -1,5 +1,8 @@
 package at.ac.fhcampuswien.fhmdb.exception;
 
+import lombok.Getter;
+
+@Getter
 public class ApplicationException extends Exception{
     private final ExceptionType type;
     private final int errorCode;
@@ -10,11 +13,4 @@ public class ApplicationException extends Exception{
         this.errorCode = errorCode.getCode();
     }
 
-    public ExceptionType getType() {
-        return type;
-    }
-
-    public int getErrorCode() {
-        return errorCode;
-    }
 }
