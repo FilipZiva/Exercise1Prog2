@@ -1,10 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.ui;
 
-import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
-import at.ac.fhcampuswien.fhmdb.service.WatchlistService;
-import at.ac.fhcampuswien.fhmdb.util.PopupUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -32,13 +28,19 @@ public class MovieCell extends ListCell<Movie> {
     private final HBox buttonsBox = new HBox(showDetailsButton, watchlistButton);
     private final VBox layout = new VBox(title, detail, genre, buttonsBox);
 
-    private final WatchlistService watchlistService;
     private final boolean isInWatchlistView;
     private boolean detailsVisible = false;
 
-    public MovieCell(WatchlistService watchlistService, boolean isInWatchlistView) {
-        this.watchlistService = watchlistService;
+    public MovieCell(boolean isInWatchlistView, ClickEventHandler<Movie> addToWatchlistClicked, ClickEventHandler<Movie> removeFromWatchlistClicked) {
         this.isInWatchlistView = isInWatchlistView;
+
+        watchlistButton.setOnMouseClicked(mouseEvent -> {
+            if (isInWatchlistView) {
+                removeFromWatchlistClicked.onClick(getItem());
+            } else {
+                addToWatchlistClicked.onClick(getItem());
+            }
+        });
     }
 
     @Override
@@ -88,25 +90,8 @@ public class MovieCell extends ListCell<Movie> {
 
             if (isInWatchlistView) {
                 watchlistButton.setText("Remove from Watchlist");
-                watchlistButton.setOnAction(e -> {
-                    try {
-                        watchlistService.removeFromWatchlist(movie.getApiId());
-                    } catch (ApplicationException ex) {
-                        PopupUtil.showPopup(ex);
-                    }
-                    getListView().getItems().remove(movie);
-                });
             } else {
                 watchlistButton.setText("Add to Watchlist");
-                WatchlistMovie watchlistMovie = new WatchlistMovie();
-                watchlistMovie.setMovie(movie);
-                watchlistButton.setOnAction(e -> {
-                    try {
-                        watchlistService.addToWatchlist(watchlistMovie);
-                    } catch (ApplicationException ex) {
-                        PopupUtil.showPopup(ex);
-                    }
-                });
             }
             buttonsBox.setSpacing(10);
             buttonsBox.setAlignment(Pos.CENTER_RIGHT);

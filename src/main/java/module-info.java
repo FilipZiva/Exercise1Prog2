@@ -26,4 +26,6 @@ module at.ac.fhcampuswien.fhmdb {
     exports at.ac.fhcampuswien.fhmdb;
     exports at.ac.fhcampuswien.fhmdb.service;
     exports at.ac.fhcampuswien.fhmdb.controller;
+    exports at.ac.fhcampuswien.fhmdb.ui;
+    opens at.ac.fhcampuswien.fhmdb.ui to com.fasterxml.jackson.databind, javafx.fxml, spring.beans, spring.context, spring.core, spring.web;
 }

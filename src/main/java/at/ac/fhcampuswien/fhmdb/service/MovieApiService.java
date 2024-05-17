@@ -98,6 +98,7 @@ public class MovieApiService {
     private void handleMoviesInDatabase(List<Movie> movies) throws ApplicationException {
         try {
             List<Movie> existingMovies = movieRepository.getAllMovies();
+
             Set<String> existingMovieTitles = existingMovies.stream()
                     .map(Movie::getTitle)
                     .collect(Collectors.toSet());

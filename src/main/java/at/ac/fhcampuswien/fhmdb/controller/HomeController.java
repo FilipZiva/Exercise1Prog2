@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.controller;
 
+import at.ac.fhcampuswien.fhmdb.ui.ClickEventHandler;
 import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
@@ -115,7 +116,27 @@ public class HomeController implements Initializable {
 
     public void initializeUi() {
         movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(movieListView -> new MovieCell(watchlistService, isInWatchlistView));
+
+        ClickEventHandler<Movie> addToWatchlistClicked = clickedMovie -> {
+            try {
+                WatchlistMovie watchlistMovie = new WatchlistMovie();
+                watchlistMovie.setMovie(clickedMovie);
+                watchlistService.addToWatchlist(watchlistMovie);
+            } catch (ApplicationException ex) {
+                PopupUtil.showPopup(ex);
+            }
+        };
+
+        ClickEventHandler<Movie> removeFromWatchlistClicked = clickedMovie -> {
+            try {
+                watchlistService.removeFromWatchlist(clickedMovie.getApiId());
+                observableMovies.remove(clickedMovie);
+            } catch (ApplicationException ex) {
+                PopupUtil.showPopup(ex);
+            }
+        };
+
+        movieListView.setCellFactory(movieListView -> new MovieCell(isInWatchlistView, addToWatchlistClicked, removeFromWatchlistClicked));
     }
 
     public void initializeMovies() throws ApplicationException {
