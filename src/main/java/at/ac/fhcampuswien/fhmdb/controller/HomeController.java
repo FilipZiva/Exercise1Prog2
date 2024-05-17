@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.controller;
 
+import at.ac.fhcampuswien.fhmdb.config.ApplicationConfig;
 import at.ac.fhcampuswien.fhmdb.ui.ClickEventHandler;
 import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -142,7 +143,7 @@ public class HomeController implements Initializable {
     public void initializeMovies() throws ApplicationException {
         observableMovies.clear();
         movieApiService = new MovieApiService();
-        allMovies = movieApiService.getAllMovies();
+        allMovies = movieApiService.getAllMovies(ApplicationConfig.API_ENDPOINT);
         observableMovies.addAll(allMovies);
     }
 
@@ -247,10 +248,10 @@ public class HomeController implements Initializable {
         }
 
         if (queryBuilder.isEmpty()) {
-            return movieApiService.getAllMovies();
+            return movieApiService.getAllMovies(ApplicationConfig.API_ENDPOINT);
         }
 
-        return movieApiService.getMoviesByQuery(queryBuilder.toString());
+        return movieApiService.getMoviesByQuery(queryBuilder.toString(), ApplicationConfig.API_ENDPOINT);
     }
 
     public void filterMovieByTitleAscDesc(boolean initialize) {

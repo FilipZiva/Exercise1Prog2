@@ -1,7 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.service;
 
 
-import at.ac.fhcampuswien.fhmdb.config.ApplicationConfig;
 import at.ac.fhcampuswien.fhmdb.dao.MovieRepository;
 import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.exception.ErrorCodes;
@@ -25,11 +24,7 @@ public class MovieApiService {
     private final MovieRepository movieRepository;
 
     public MovieApiService() throws ApplicationException {
-        try {
-            this.movieRepository = new MovieRepository();
-        } catch (Exception e) {
-            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DAO_CREATION_ERROR, "Error initializing: " + e.getMessage());
-        }
+        this.movieRepository = new MovieRepository();
     }
 
     public ResponseEntity<JsonNode> getResponseAsJson(String url) throws ApplicationException {
@@ -41,9 +36,9 @@ public class MovieApiService {
         }
     }
 
-    public List<Movie> getAllMovies() throws ApplicationException {
+    public List<Movie> getAllMovies(String apiEndpoint) throws ApplicationException {
         try {
-            ResponseEntity<JsonNode> responseEntity = getResponseAsJson(ApplicationConfig.API_ENDPOINT);
+            ResponseEntity<JsonNode> responseEntity = getResponseAsJson(apiEndpoint);
             JsonNode jsonNode = responseEntity.getBody();
             return getMovieList(jsonNode);
         } catch (Exception e) {
@@ -52,9 +47,9 @@ public class MovieApiService {
         }
     }
 
-    public List<Movie> getMoviesByQuery(String query) throws ApplicationException {
+    public List<Movie> getMoviesByQuery(String query, String apiEndpoint) throws ApplicationException {
         try {
-            ResponseEntity<JsonNode> responseEntity = getResponseAsJson(ApplicationConfig.API_ENDPOINT + "?" + query);
+            ResponseEntity<JsonNode> responseEntity = getResponseAsJson(apiEndpoint + "?" + query);
             JsonNode jsonNode = responseEntity.getBody();
             return getMovieList(jsonNode);
         } catch (Exception e) {
@@ -62,7 +57,7 @@ public class MovieApiService {
         }
     }
 
-    private List<Movie> getMovieList(JsonNode jsonNode) throws ApplicationException {
+    public List<Movie> getMovieList(JsonNode jsonNode) throws ApplicationException {
         try {
             List<Movie> movies = new ArrayList<>();
             if (jsonNode != null) {
@@ -96,22 +91,18 @@ public class MovieApiService {
     }
 
     private void handleMoviesInDatabase(List<Movie> movies) throws ApplicationException {
-        try {
-            List<Movie> existingMovies = movieRepository.getAllMovies();
+        List<Movie> existingMovies = movieRepository.getAllMovies();
 
-            Set<String> existingMovieTitles = existingMovies.stream()
-                    .map(Movie::getTitle)
-                    .collect(Collectors.toSet());
+        Set<String> existingMovieTitles = existingMovies.stream()
+                .map(Movie::getTitle)
+                .collect(Collectors.toSet());
 
-            List<Movie> newMovies = movies.stream()
-                    .filter(movie -> !existingMovieTitles.contains(movie.getTitle()))
-                    .collect(Collectors.toList());
+        List<Movie> newMovies = movies.stream()
+                .filter(movie -> !existingMovieTitles.contains(movie.getTitle()))
+                .collect(Collectors.toList());
 
-            if (!newMovies.isEmpty()) {
-                movieRepository.addAllMovies(newMovies);
-            }
-        } catch (Exception e) {
-            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_QUERY_ERROR, "Error handling movies in database: " + e.getMessage());
+        if (!newMovies.isEmpty()) {
+            movieRepository.addAllMovies(newMovies);
         }
     }
 }

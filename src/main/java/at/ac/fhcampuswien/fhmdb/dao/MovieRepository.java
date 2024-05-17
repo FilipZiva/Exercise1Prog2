@@ -16,7 +16,7 @@ public class MovieRepository {
     public MovieRepository() throws ApplicationException {
         try {
             dao = DatabaseUtil.getDatabase().getMovieDao();
-        } catch (ApplicationException e) {
+        } catch (Exception e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DAO_CREATION_ERROR, "Error initializing: " + e.getMessage());
         }
     }
@@ -24,7 +24,7 @@ public class MovieRepository {
     public List<Movie> getAllMovies() throws ApplicationException {
         try {
             return dao.queryForAll();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_QUERY_ERROR, "Error fetching all movies: " + e.getMessage());
         }
     }
@@ -32,7 +32,7 @@ public class MovieRepository {
     public int removeAllMovies() throws ApplicationException {
         try {
             return dao.deleteBuilder().delete();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DELETE_ERROR, "Error removing all movies: " + e.getMessage());
         }
     }
@@ -40,7 +40,7 @@ public class MovieRepository {
     public Movie getMovie(Movie id) throws ApplicationException {
         try {
             return dao.queryForSameId(id);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_QUERY_BY_ID_ERROR, "Error fetching movie by ID: " + e.getMessage());
         }
     }
@@ -53,7 +53,7 @@ public class MovieRepository {
                 addedCount++;
             }
             return addedCount;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_INSERT_ERROR, "Error adding movies: " + e.getMessage());
         }
     }

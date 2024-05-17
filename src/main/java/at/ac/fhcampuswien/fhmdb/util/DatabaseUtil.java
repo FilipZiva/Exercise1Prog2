@@ -18,12 +18,12 @@ import java.sql.SQLException;
 @Getter
 public class DatabaseUtil {
 
-    private static ConnectionSource connectionSource;
+    public static ConnectionSource connectionSource;
 
     private final Dao<Movie, Long> movieDao;
     private final Dao<WatchlistMovie, Long> watchlistDao;
 
-    private static DatabaseUtil instance;
+    public static DatabaseUtil instance;
 
     private DatabaseUtil() throws ApplicationException {
         try {
@@ -31,7 +31,7 @@ public class DatabaseUtil {
             movieDao = DaoManager.createDao(connectionSource, Movie.class);
             watchlistDao = DaoManager.createDao(connectionSource, WatchlistMovie.class);
             createTables();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_DAO_CREATION_ERROR, e.getMessage());
         }
     }
@@ -43,21 +43,17 @@ public class DatabaseUtil {
         return instance;
     }
 
-    private static void createConnectionSource() throws ApplicationException {
+    public static void createConnectionSource() throws ApplicationException {
         try {
             connectionSource = new JdbcConnectionSource(ApplicationConfig.DB_URL, ApplicationConfig.DB_USER, ApplicationConfig.DB_PASSWORD);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_CONNECTION_ERROR, e.getMessage());
         }
     }
 
-    private static void createTables() throws ApplicationException {
-        try {
-            TableUtils.createTableIfNotExists(connectionSource, Movie.class);
-            TableUtils.createTableIfNotExists(connectionSource, WatchlistMovie.class);
-        } catch (SQLException e) {
-            throw new ApplicationException(ExceptionType.DATABASE_EXCEPTION, ErrorCodes.DATABASE_TABLE_CREATION_ERROR, e.getMessage());
-        }
+    public static void createTables() throws SQLException {
+        TableUtils.createTableIfNotExists(connectionSource, Movie.class);
+        TableUtils.createTableIfNotExists(connectionSource, WatchlistMovie.class);
     }
 
 }
