@@ -67,8 +67,12 @@ public class HomeController implements Initializable {
 
     ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
+    private SortContext sortContext;
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        sortContext = new SortContext();
         try {
             initializeMovies();
             initializeUi();
@@ -193,12 +197,13 @@ public class HomeController implements Initializable {
     private void handleSortingMechanism() {
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
-                filterMovieByTitleAscDesc(false);
+                sortContext.setState(new DescendingSortState());
                 sortBtn.setText("Sort (desc)");
             } else {
-                filterMovieByTitleAscDesc(true);
+                sortContext.setState(new AscendingSortState());
                 sortBtn.setText("Sort (asc)");
             }
+            sortContext.sort(observableMovies);
         });
     }
 
@@ -220,6 +225,7 @@ public class HomeController implements Initializable {
 
         List<Movie> filteredMovies = filterMovieByQueryOrGenre(searchQuery, selectedGenre, selectedYear, selectedRating);
         observableMovies.setAll(filteredMovies);
+        sortContext.sort(observableMovies);
     }
 
     public List<Movie> filterMovieByQueryOrGenre(String searchQuery, String selectedGenre, String selectedYear, String selectedRating) throws ApplicationException {
