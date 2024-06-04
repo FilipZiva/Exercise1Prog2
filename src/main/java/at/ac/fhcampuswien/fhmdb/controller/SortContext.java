@@ -10,6 +10,9 @@ public class SortContext{
         // Initialer Zustand
         this.currentState = new AscendingSortState();
     }
+    public SortState getCurrentState() {
+        return currentState;
+    }
 
     public void setState(SortState state) {
         this.currentState = state;
