@@ -24,7 +24,7 @@ public class MovieApiService {
     private final MovieRepository movieRepository;
 
     public MovieApiService() throws ApplicationException {
-        this.movieRepository = new MovieRepository();
+        this.movieRepository = MovieRepository.getInstance();
     }
 
     public ResponseEntity<JsonNode> getResponseAsJson(String url) throws ApplicationException {

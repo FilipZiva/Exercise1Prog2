@@ -12,6 +12,15 @@ import java.util.List;
 
 public class MovieRepository {
     private final Dao<Movie, Long> dao;
+    public static MovieRepository instance;
+
+
+    public static MovieRepository getInstance() throws ApplicationException {
+        if (instance == null) {
+            instance =  new MovieRepository();
+        }
+        return instance;
+    }
 
     public MovieRepository() throws ApplicationException {
         try {

@@ -11,7 +11,7 @@ public class WatchlistService {
     private final WatchlistRepository watchlistRepository;
 
     public WatchlistService() throws ApplicationException {
-        this.watchlistRepository = new WatchlistRepository();
+        this.watchlistRepository = WatchlistRepository.getInstance();
     }
 
     public List<WatchlistMovie> getWatchlist() throws ApplicationException {

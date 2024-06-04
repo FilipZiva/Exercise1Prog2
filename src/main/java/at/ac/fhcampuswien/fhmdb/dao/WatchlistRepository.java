@@ -13,6 +13,14 @@ import java.util.List;
 
 public class WatchlistRepository {
     private final Dao<WatchlistMovie, Long> dao;
+    public static WatchlistRepository instance;
+
+    public static WatchlistRepository getInstance() throws ApplicationException {
+        if (instance == null) {
+            instance = new WatchlistRepository();
+        }
+        return instance;
+    }
 
     public WatchlistRepository() throws ApplicationException {
         try {
