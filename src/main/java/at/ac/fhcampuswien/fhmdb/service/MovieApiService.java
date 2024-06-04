@@ -6,6 +6,7 @@ import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.exception.ErrorCodes;
 import at.ac.fhcampuswien.fhmdb.exception.ExceptionType;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.util.MovieApiRequestBuilderImpl;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,6 @@ import static at.ac.fhcampuswien.fhmdb.util.PopupUtil.showPopup;
 
 @Service
 public class MovieApiService {
-
     private final MovieRepository movieRepository;
 
     public MovieApiService() throws ApplicationException {
@@ -49,11 +49,32 @@ public class MovieApiService {
 
     public List<Movie> getMoviesByQuery(String query, String apiEndpoint) throws ApplicationException {
         try {
-            ResponseEntity<JsonNode> responseEntity = getResponseAsJson(apiEndpoint + "?" + query);
+            String url = new MovieApiRequestBuilderImpl(apiEndpoint)
+                    .query(query)
+                    .build();
+
+            ResponseEntity<JsonNode> responseEntity = getResponseAsJson(url);
             JsonNode jsonNode = responseEntity.getBody();
             return getMovieList(jsonNode);
         } catch (Exception e) {
             throw new ApplicationException(ExceptionType.MOVIE_API_EXCEPTION, ErrorCodes.API_RESPONSE_ERROR, "Error processing API response for query: " + e.getMessage());
+        }
+    }
+
+    public List<Movie> getMoviesByQueryParams(String apiEndpoint, String query, String genre, String releaseYear, String ratingFrom) throws ApplicationException {
+        try {
+            String url = new MovieApiRequestBuilderImpl(apiEndpoint)
+                    .query(query)
+                    .genre(genre)
+                    .releaseYear(releaseYear)
+                    .ratingFrom(ratingFrom)
+                    .build();
+
+            ResponseEntity<JsonNode> responseEntity = getResponseAsJson(url);
+            JsonNode jsonNode = responseEntity.getBody();
+            return getMovieList(jsonNode);
+        } catch (Exception e) {
+            throw new ApplicationException(ExceptionType.MOVIE_API_EXCEPTION, ErrorCodes.API_RESPONSE_ERROR, "Error processing API response: " + e.getMessage());
         }
     }
 

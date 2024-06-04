@@ -229,36 +229,12 @@ public class HomeController implements Initializable {
     }
 
     public List<Movie> filterMovieByQueryOrGenre(String searchQuery, String selectedGenre, String selectedYear, String selectedRating) throws ApplicationException {
-        StringBuilder queryBuilder = new StringBuilder();
-
-        if (!searchQuery.isEmpty()) {
-            queryBuilder.append("query=").append(searchQuery);
-        }
-        if (!selectedGenre.isEmpty()) {
-            if (!queryBuilder.isEmpty()) {
-                queryBuilder.append("&");
-            }
-            queryBuilder.append("genre=").append(selectedGenre);
-        }
-        if (!selectedYear.isEmpty()) {
-            if (!queryBuilder.isEmpty()) {
-                queryBuilder.append("&");
-            }
-            queryBuilder.append("releaseYear=").append(selectedYear);
-        }
-        if (!selectedRating.isEmpty()) {
-            if (!queryBuilder.isEmpty()) {
-                queryBuilder.append("&");
-            }
-            queryBuilder.append("ratingFrom=").append(selectedRating);
-        }
-
-        if (queryBuilder.isEmpty()) {
+        if (searchQuery.isEmpty() && selectedGenre.isEmpty() && selectedYear.isEmpty() && selectedRating.isEmpty()) {
             return movieApiService.getAllMovies(ApplicationConfig.API_ENDPOINT);
         }
-
-        return movieApiService.getMoviesByQuery(queryBuilder.toString(), ApplicationConfig.API_ENDPOINT);
+        return movieApiService.getMoviesByQueryParams(ApplicationConfig.API_ENDPOINT, searchQuery, selectedGenre, selectedYear, selectedRating);
     }
+
 
     public void filterMovieByTitleAscDesc(boolean initialize) {
         if (!initialize) {
