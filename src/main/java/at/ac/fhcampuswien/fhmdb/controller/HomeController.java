@@ -1,12 +1,14 @@
 package at.ac.fhcampuswien.fhmdb.controller;
 
 import at.ac.fhcampuswien.fhmdb.config.ApplicationConfig;
-import at.ac.fhcampuswien.fhmdb.ui.ClickEventHandler;
+import at.ac.fhcampuswien.fhmdb.dao.Observer;
+import at.ac.fhcampuswien.fhmdb.dao.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exception.ApplicationException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.WatchlistMovie;
 import at.ac.fhcampuswien.fhmdb.service.MovieApiService;
 import at.ac.fhcampuswien.fhmdb.service.WatchlistService;
+import at.ac.fhcampuswien.fhmdb.ui.ClickEventHandler;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import at.ac.fhcampuswien.fhmdb.util.PopupUtil;
 import com.jfoenix.controls.JFXButton;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class HomeController implements Initializable {
+public class HomeController implements Initializable, Observer<String> {
     @FXML
     public JFXButton searchBtn;
 
@@ -69,7 +71,6 @@ public class HomeController implements Initializable {
 
     private SortContext sortContext;
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         sortContext = new SortContext();
@@ -83,9 +84,16 @@ public class HomeController implements Initializable {
             handleSortingMechanism();
             handleSearchbarFilter();
             handleNavigation();
+
+            WatchlistRepository.getInstance().registerObserver(this);
         } catch (ApplicationException e) {
             PopupUtil.showPopup(e);
         }
+    }
+
+    @Override
+    public void update(String message) {
+        PopupUtil.showPopup(message);
     }
 
     private void handleNavigation() throws ApplicationException {
@@ -126,7 +134,7 @@ public class HomeController implements Initializable {
             try {
                 WatchlistMovie watchlistMovie = new WatchlistMovie();
                 watchlistMovie.setMovie(clickedMovie);
-                watchlistService.addToWatchlist(watchlistMovie);
+                WatchlistRepository.getInstance().addToWatchlist(watchlistMovie);
             } catch (ApplicationException ex) {
                 PopupUtil.showPopup(ex);
             }
@@ -234,7 +242,6 @@ public class HomeController implements Initializable {
         }
         return movieApiService.getMoviesByQueryParams(ApplicationConfig.API_ENDPOINT, searchQuery, selectedGenre, selectedYear, selectedRating);
     }
-
 
     public void filterMovieByTitleAscDesc(boolean initialize) {
         if (!initialize) {

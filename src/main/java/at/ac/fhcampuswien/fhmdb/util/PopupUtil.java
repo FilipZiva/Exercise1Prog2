@@ -14,10 +14,22 @@ public class PopupUtil {
         alert.showAndWait();
     }
 
+    private static void showMessage(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     public static void showPopup(ApplicationException e) {
         String title = "An error occurred: " + e.getType();
         String message = "Error Code: " + e.getErrorCode();
         String details = e.getMessage();
         PopupUtil.showError(title, message, details);
+    }
+
+    public static void showPopup(String message) {
+        PopupUtil.showMessage("Watchlist", message);
     }
 }
