@@ -31,7 +31,7 @@ class WatchlistRepositoryTest {
         );
 
         movieRepository = new MovieRepository();
-        watchlistRepository = new WatchlistRepository();
+        watchlistRepository = WatchlistRepository.getInstance();
 
         movieRepository.addAllMovies(dummyMovies);
 
