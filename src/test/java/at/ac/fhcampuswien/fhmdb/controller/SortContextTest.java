@@ -33,28 +33,43 @@ class SortContextTest {
     }
 
     @Test
-    void setState() {
-        // Arrange
-        SortState ascendingSortState = new AscendingSortState();
-        SortState descendingSortState = new DescendingSortState();
-
-        // Act
-        sortContext.setState(ascendingSortState);
-        SortState currentStateAfterAscending = sortContext.getCurrentState();
-
-        sortContext.setState(descendingSortState);
-        SortState currentStateAfterDescending = sortContext.getCurrentState();
-
-        // Assert
-        assertInstanceOf(AscendingSortState.class, currentStateAfterAscending);
-        assertInstanceOf(DescendingSortState.class, currentStateAfterDescending);
+    void initialState_isNotSortedState() {
+        assertInstanceOf(NotSortedState.class, sortContext.getCurrentState());
     }
 
+    @Test
+    void stateTransitions() {
+        // Initial state should be NotSortedState
+        assertInstanceOf(NotSortedState.class, sortContext.getCurrentState());
+
+        // Transition to AscendingSortState
+        sortContext.nextState();
+        assertInstanceOf(AscendingSortState.class, sortContext.getCurrentState());
+
+        // Transition to DescendingSortState
+        sortContext.nextState();
+        assertInstanceOf(DescendingSortState.class, sortContext.getCurrentState());
+
+        // Transition back to NotSortedState
+        sortContext.nextState();
+        assertInstanceOf(NotSortedState.class, sortContext.getCurrentState());
+    }
+
+    @Test
+    void sort_notSortedState() {
+        // Act
+        sortContext.sort(movies);
+
+        // Assert
+        assertEquals("abcdefghijklm", movies.get(0).getTitle());
+        assertEquals("Movie 23333", movies.get(1).getTitle());
+        assertEquals("Movie 322", movies.get(2).getTitle());
+    }
 
     @Test
     void sort_ascendingSortState() {
         // Arrange
-        sortContext.setState(new AscendingSortState());
+        sortContext.nextState();
 
         // Act
         sortContext.sort(movies);
@@ -68,7 +83,8 @@ class SortContextTest {
     @Test
     void sort_descendingSortState() {
         // Arrange
-        sortContext.setState(new DescendingSortState());
+        sortContext.nextState();
+        sortContext.nextState();
 
         // Act
         sortContext.sort(movies);
