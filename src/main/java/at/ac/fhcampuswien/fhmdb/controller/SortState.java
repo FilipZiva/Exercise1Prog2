@@ -5,4 +5,5 @@ import javafx.collections.ObservableList;
 
 public interface SortState {
     void sort(ObservableList<Movie> movies);
+    SortState nextState();
 }

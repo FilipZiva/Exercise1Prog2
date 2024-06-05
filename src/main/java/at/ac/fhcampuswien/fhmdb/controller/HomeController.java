@@ -204,15 +204,20 @@ public class HomeController implements Initializable, Observer<String> {
 
     private void handleSortingMechanism() {
         sortBtn.setOnAction(actionEvent -> {
-            if (sortBtn.getText().equals("Sort (asc)")) {
-                sortContext.setState(new DescendingSortState());
-                sortBtn.setText("Sort (desc)");
-            } else {
-                sortContext.setState(new AscendingSortState());
-                sortBtn.setText("Sort (asc)");
-            }
+            sortContext.nextState();
+            updateSortButtonText();
             sortContext.sort(observableMovies);
         });
+    }
+
+    private void updateSortButtonText() {
+        if (sortContext.getCurrentState() instanceof NotSortedState) {
+            sortBtn.setText("Not sorted");
+        } else if (sortContext.getCurrentState() instanceof AscendingSortState) {
+            sortBtn.setText("Sort (asc)");
+        } else if (sortContext.getCurrentState() instanceof DescendingSortState) {
+            sortBtn.setText("Sort (desc)");
+        }
     }
 
     private void handleResetButton() {

@@ -6,10 +6,14 @@ import javafx.collections.ObservableList;
 
 import java.util.Comparator;
 
-public class DescendingSortState implements SortState{
+public class DescendingSortState implements SortState {
     @Override
     public void sort(ObservableList<Movie> movies) {
         FXCollections.sort(movies, Comparator.comparing(Movie::getTitle).reversed());
+    }
 
+    @Override
+    public SortState nextState() {
+        return new NotSortedState();
     }
 }
