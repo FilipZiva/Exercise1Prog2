@@ -30,7 +30,7 @@ class WatchlistRepositoryTest {
                         List.of("Actor 1"), 2.8)
         );
 
-        movieRepository = new MovieRepository();
+        movieRepository = MovieRepository.getInstance();
         watchlistRepository = WatchlistRepository.getInstance();
 
         movieRepository.addAllMovies(dummyMovies);

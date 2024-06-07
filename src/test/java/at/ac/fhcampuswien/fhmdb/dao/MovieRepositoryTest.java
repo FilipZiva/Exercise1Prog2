@@ -27,7 +27,7 @@ class MovieRepositoryTest {
 
     @BeforeEach
     void setUp() throws ApplicationException {
-        repository = new MovieRepository();
+        repository = MovieRepository.getInstance();
         repository.removeAllMovies();
         repository.addAllMovies(dummyMovies);
     }
